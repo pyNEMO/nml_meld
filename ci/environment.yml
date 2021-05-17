@@ -1,0 +1,7 @@
+name: nmlmeld_test
+channels:
+  - conda-forge
+dependencies:
+  - pytest-cov
+  - pytest
+  - pytest-xdist

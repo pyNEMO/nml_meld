@@ -1,0 +1,11 @@
+name: nmlmeld_test_dev
+channels:
+  - conda-forge
+dependencies:
+  - pytest-cov
+  - pytest
+  - pytest-xdist
+  - pip
+  - pip:
+    # Example
+    # - git+https://github.com/pydata/xarray.git
