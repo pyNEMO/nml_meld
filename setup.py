@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
       use_scm_version=True,
 
-      packages=['pynemo_namelist_tool','pynemo_namelist_tool.tests'],
+      packages=['nmlmeld','nmlmeld.tests'],
       
       install_requires=[''],
       
