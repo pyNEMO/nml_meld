@@ -5,7 +5,7 @@ Tool to compare and edit NEMO namelist files.
 
 @author James Harle
 
-$Last commit on:$
+$Last commit on: Wed 19 May 2021$
 '''
 
 import re
@@ -19,24 +19,23 @@ except NameError:
     QString = str
 
 sip.setapi('QString', 2)
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSlot
 from copy import deepcopy
+from functools import partial 
 import collections
 
-from PyQt5.QtCore import QModelIndex, Qt, QItemSelectionModel
-from PyQt5.QtWidgets import QApplication,  \
-                        QPushButton, QToolButton, \
-                         QTreeView, QComboBox
-from PyQt5.QtGui import   QStandardItem, QStandardItemModel
-from functools import partial 
+from PyQt5.QtCore    import Qt, pyqtSlot, QCoreApplication
+from PyQt5.QtWidgets import QApplication, QErrorMessage, QAbstractItemView, \
+                            QPushButton, QToolButton, QLineEdit, QVBoxLayout, \
+                            QTreeView, QComboBox, QDialog, QHBoxLayout, \
+                            QFileDialog, QMessageBox, QHeaderView
+from PyQt5.QtGui     import QStandardItem, QStandardItemModel, QColor
 
 # TODO add a search box to focus only desired nam blocks
 
 def compare(nlist_1, nlist_2, gui):
     
     if gui:
-        app = QtWidgets.QApplication(sys.argv)
+        app = QApplication(sys.argv)
         print(nlist_1) # TODO: At the moment nlist_1 is hard coded for a directory scan
         print(nlist_2)
         ex = TestDialog(nlist_1, nlist_2)
@@ -52,14 +51,14 @@ def compare(nlist_1, nlist_2, gui):
         print('command line tool not yet configured')
         sys.exit()
         
-class TestDialog(QtWidgets.QDialog):
+class TestDialog(QDialog):
     def __init__(self, nlist_0, nlist_1):
 
         super(TestDialog, self).__init__()
         
         
-        self.emsg = QtWidgets.QErrorMessage(self)
-        self.emsg.setWindowModality(QtCore.Qt.WindowModal)
+        self.emsg = QErrorMessage(self)
+        self.emsg.setWindowModality(Qt.WindowModal)
         self.emsg.children()[2].setVisible(False)
         
         data0=self.dir_scan(nlist_0,'*.f90')
@@ -77,26 +76,28 @@ class TestDialog(QtWidgets.QDialog):
         # TreeView for each data set
         self.tree = {}
         for col in cols:
-            self.tree[col] = QtWidgets.QTreeView()
+            self.tree[col] = QTreeView()
         
         # Layout
-        btOk = QtWidgets.QPushButton("OK")
-        btCancel = QtWidgets.QPushButton("Cancel")
-        btSearch = QtWidgets.QPushButton('Search')
-        self.searchInput= QtWidgets.QLineEdit()
+        btOk = QPushButton("OK")
+        btCancel = QPushButton("Cancel")
+        btSearch = QPushButton('Search')
+        self.searchInput= QLineEdit()
         
         # Search Box
-        self.searchInput.setText(QtCore.QCoreApplication.translate("Find a nam_block or nam_item", "Enter search text here"))
+        self.searchInput.setText(QCoreApplication.translate(
+                     "Find a nam_block or nam_item", "Enter search text here"))
         btSearch.setToolTip(
-            QtCore.QCoreApplication.translate(
-                "Find a nam_block or nam_item", "Enter search text here, press ENTER again to go to next match!"
+            QCoreApplication.translate(
+                "Find a nam_block or nam_item", 
+                "Enter search text here, press ENTER again to go to next match!"
             )
         )
         btSearch.clicked.connect(self.searchItem)
         
         
         # First row
-        hbox1 = QtWidgets.QHBoxLayout()
+        hbox1 = QHBoxLayout()
         hbox1.addStretch(1)
         hbox1.addWidget(btSearch, 100)
         #self.connect(self.btSearch, SIGNAL("returnPressed()"), self.searchItem)
@@ -110,13 +111,13 @@ class TestDialog(QtWidgets.QDialog):
         #self.button.clicked.connect(self.handleButton)
         
         # Second row
-        hbox2 = QtWidgets.QHBoxLayout()
+        hbox2 = QHBoxLayout()
         #hbox2.addStretch(1)
         for col in ['col0', 'col1']:
             hbox2.addWidget(self.tree[col])
         
         # Wrap both columns in a container
-        vbox = QtWidgets.QVBoxLayout()
+        vbox = QVBoxLayout()
         vbox.addLayout(hbox1)
         vbox.addLayout(hbox2)
         #vbox.addWidget(self.tree1)
@@ -131,23 +132,23 @@ class TestDialog(QtWidgets.QDialog):
         
         for col in cols:
             col_next = cols[1-cols.index(col)]
-            self.tree[col].setModel(QtGui.QStandardItemModel())
+            self.tree[col].setModel(QStandardItemModel())
             self.tree[col].setAlternatingRowColors(True)
             #self.tree[col].model().setData(self.tree[col].model().index(1, 1), QtGui.QBrush(QtGui.QColor(255, 0, 0)), QtCore.Qt.BackgroundRole)
             self.tree[col].setSortingEnabled(True)
             self.tree[col].setHeaderHidden(False)
             #self.tree[col].setColumnWidth(2, 30) # This does work!
-            self.tree[col].setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
+            self.tree[col].setSelectionBehavior(QAbstractItemView.SelectItems)
             self.tree[col].model().setHorizontalHeaderLabels(['Parameter', 'Value', 'Update'])
-            self.tree[col].header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-            self.tree[col].header().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+            self.tree[col].header().setSectionResizeMode(0, QHeaderView.Stretch)
+            self.tree[col].header().setSectionResizeMode(1, QHeaderView.Stretch)
             self.tree[col].header().resizeSection(2, 50)
-            self.tree[col].header().setSectionResizeMode(2, QtWidgets.QHeaderView.Fixed)
+            self.tree[col].header().setSectionResizeMode(2, QHeaderView.Fixed)
             self.tree[col].header().setStretchLastSection(False)
             if col!='col0':
             #                self.tree[col].model().setHorizontalHeaderLabels(['Update', 'Parameter', 'Value'])
                 self.tree[col].header().moveSection(2,0)
-            #self.tree1.model().horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+            #self.tree1.model().horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
 
 
         for col in cols:        
@@ -192,17 +193,15 @@ class TestDialog(QtWidgets.QDialog):
         # TODO: run initial check on all the data to see if correct type
         
         # Set constants
-        color_diff = QtGui.QColor(205, 92,  92)
-        color_miss = QtGui.QColor( 92, 92, 205)
+        color_diff = QColor(205, 92,  92)
+        color_miss = QColor( 92, 92, 205)
         
         # Which namelist are we dealing with
         if col=='col0': 
             col_alt = 'col1'
-            #arrow   = "-->"
             arrow   = 4
         else:
             col_alt = 'col0'
-            #arrow   = "<--"
             arrow   = 3
         
         # Local variables
@@ -219,8 +218,8 @@ class TestDialog(QtWidgets.QDialog):
         parent1 = QStandardItem()           # Not used
         parent2 = QStandardItem()           # Placeholder for QToolButton
         
-        parent0.setFlags(QtCore.Qt.NoItemFlags)
-        parent1.setFlags(QtCore.Qt.NoItemFlags)
+        parent0.setFlags(Qt.NoItemFlags)
+        parent1.setFlags(Qt.NoItemFlags)
              
         # Add row
         model.appendRow([parent0, parent1, parent2])
@@ -237,9 +236,9 @@ class TestDialog(QtWidgets.QDialog):
             tree.setIndexWidget(parind2, q_btn)
             
         if not nambk1:
-            model.setData(parind0, color_miss, QtCore.Qt.ForegroundRole)
+            model.setData(parind0, color_miss, Qt.ForegroundRole)
         elif (nambk0 != nambk1):
-            model.setData(parind0, color_diff, QtCore.Qt.ForegroundRole)
+            model.setData(parind0, color_diff, Qt.ForegroundRole)
 
 #parent_item.setData("this is a parent", QtCore.Qt.ToolTipRole)
 
@@ -263,11 +262,11 @@ class TestDialog(QtWidgets.QDialog):
             
             #child0.setFlags(QtCore.Qt.NoItemFlags | 
            #                 QtCore.Qt.ItemIsEnabled)
-            child0.setFlags(QtCore.Qt.NoItemFlags )
+            child0.setFlags(Qt.NoItemFlags )
             
-            child1.setFlags(QtCore.Qt.ItemIsEnabled |
-                            QtCore.Qt.ItemIsEditable |
-                          ~ QtCore.Qt.ItemIsSelectable)            
+            child1.setFlags(Qt.ItemIsEnabled |
+                            Qt.ItemIsEditable |
+                          ~ Qt.ItemIsSelectable)            
             
             parent0.appendRow([child0, child1, child2])
                   
@@ -282,7 +281,7 @@ class TestDialog(QtWidgets.QDialog):
                 c_box.addItem('None')
                 c_box.addItem('.true.')
                 c_box.addItem('.false.')
-                ind = c_box.findText(str(nam_val0), QtCore.Qt.MatchFixedString)
+                ind = c_box.findText(str(nam_val0), Qt.MatchFixedString)
                 c_box.setCurrentIndex(ind)
                 tree.setIndexWidget(chiind1, c_box)
 
@@ -298,9 +297,9 @@ class TestDialog(QtWidgets.QDialog):
                 tree.setIndexWidget(chiind2, q_btn)
                 
                 
-                model.setData(chiind0, color_diff, QtCore.Qt.ForegroundRole)
+                model.setData(chiind0, color_diff, Qt.ForegroundRole)
             elif not nambk1:
-                model.setData(chiind0, color_miss, QtCore.Qt.ForegroundRole)
+                model.setData(chiind0, color_miss, Qt.ForegroundRole)
             else:
                 q_btn = QToolButton()
                 
@@ -352,12 +351,12 @@ class TestDialog(QtWidgets.QDialog):
             #parent[nam_block] = type(item.text())(item.text())
         
             # else keep the original value and flag somehow
-            color_chng = QtGui.QColor(0, 0,  0)
-            color_chn1 = QtGui.QColor(176, 176,  176)
+            color_chng = QColor(0, 0,  0)
+            color_chn1 = QColor(176, 176,  176)
             Index=model.indexFromItem(item)
 
-            color_diff = QtGui.QColor(205, 92,  92)
-            color_test = QtGui.QColor(100, 0,  92)
+            color_diff = QColor(205, 92,  92)
+            color_test = QColor(100, 0,  92)
        
             print('whos the daddy'+item.parent().text())
             
@@ -378,14 +377,14 @@ class TestDialog(QtWidgets.QDialog):
 
         item = self.tree[col].model().itemFromIndex(idx)
         text = item.text()
-        for other in self.tree[col_next].model().findItems(text, QtCore.Qt.MatchFixedString):
+        for other in self.tree[col_next].model().findItems(text, Qt.MatchFixedString):
             newIndex=self.tree[col_next].model().indexFromItem(other)
             self.tree[col_next].setExpanded(newIndex, True)
 
     def handleCollapsed(self, col, col_next, idx):
         item = self.tree[col].model().itemFromIndex(idx)
         text = item.text()
-        for other in self.tree[col_next].model().findItems(text, QtCore.Qt.MatchFixedString):
+        for other in self.tree[col_next].model().findItems(text, Qt.MatchFixedString):
             newIndex=self.tree[col_next].model().indexFromItem(other)
             self.tree[col_next].setExpanded(newIndex, False)
         
@@ -416,7 +415,7 @@ class TestDialog(QtWidgets.QDialog):
         # Map changes in the data
         self.data[col_alt][nam_block] = self.data[col][nam_block]
         
-        for other in self.tree[col_alt].model().findItems(nam_block, QtCore.Qt.MatchFixedString | QtCore.Qt.MatchRecursive):
+        for other in self.tree[col_alt].model().findItems(nam_block, Qt.MatchFixedString | Qt.MatchRecursive):
             for cnt in range(other.rowCount()):
                 nam_item = other.child(cnt,0).text()
                 other.child(cnt,1).setText(str(self.data[col][nam_block][nam_item]))
@@ -464,7 +463,7 @@ class TestDialog(QtWidgets.QDialog):
         self.data[col_alt][nam_block][nam_item] = self.data[col][nam_block][nam_item]
         
         
-        for other in self.tree[col_alt].model().findItems(nam_block, QtCore.Qt.MatchFixedString | QtCore.Qt.MatchRecursive):
+        for other in self.tree[col_alt].model().findItems(nam_block, Qt.MatchFixedString | Qt.MatchRecursive):
             print('$$$$$$$$$$$$$$$$$$')
             print(other.child(0,0).text())
             print(range(other.rowCount()))
@@ -492,11 +491,11 @@ class TestDialog(QtWidgets.QDialog):
             
     def color_update(self,col,nam_block, nam_item):
         
-        color_chng = QtGui.QColor(0, 0,  0)
-        color_chn1 = QtGui.QColor(176, 176,  176)
+        color_chng = QColor(0, 0,  0)
+        color_chn1 = QColor(176, 176,  176)
        
-        color_diff = QtGui.QColor(205, 92,  92)
-        color_test = QtGui.QColor(100, 0,  92)
+        color_diff = QColor(205, 92,  92)
+        color_test = QColor(100, 0,  92)
         
         if col=='col0': 
             col_alt = 'col1'
@@ -510,27 +509,27 @@ class TestDialog(QtWidgets.QDialog):
         p2 = self.data[col_alt][nam_block]
         
         
-        for other in self.tree[col_alt].model().findItems(nam_item, QtCore.Qt.MatchFixedString | QtCore.Qt.MatchRecursive):
+        for other in self.tree[col_alt].model().findItems(nam_item, Qt.MatchFixedString | Qt.MatchRecursive):
             newIndex=self.tree[col_alt].model().indexFromItem(other)
         #    print('NEWINDEX')
        #     print(newIndex.row())
         #    print(newIndex.column())
        #     print(dir(newIndex))
             #TODO: sort out indexing
-       #     self.tree[col_alt].model().setData(newIndex,str(self.data[col][nam_block][nam_item]),QtCore.Qt.DisplayRole)
+       #     self.tree[col_alt].model().setData(newIndex,str(self.data[col][nam_block][nam_item]),Qt.DisplayRole)
             if p2[nam_item] != parent[nam_item]:
                 print('tttttttttttttttesting1a')
                 print(p2[nam_item])
                 print(parent[nam_item])
                 print('****************Not equal1')
-                self.tree[col_alt].model().setData(newIndex, color_diff, QtCore.Qt.ForegroundRole)
+                self.tree[col_alt].model().setData(newIndex, color_diff, Qt.ForegroundRole)
                 #TODO: insert arrow
             else:
                 print('tttttttttttttttesting1b')
                 print(p2[nam_item])
                 print(parent[nam_item])
                 print('****************equal1')
-                self.tree[col_alt].model().setData(newIndex, color_chng, QtCore.Qt.ForegroundRole)
+                self.tree[col_alt].model().setData(newIndex, color_chng, Qt.ForegroundRole)
                 #TODO: remove arrow
                 
   #              q_btn = item.parent().child(item.row(), 2)
@@ -543,12 +542,12 @@ class TestDialog(QtWidgets.QDialog):
                 #q_btn.setEnabled(False)
 
         # TODO: probably don't need the following for block
-        for other in self.tree[col].model().findItems(nam_item, QtCore.Qt.MatchFixedString | QtCore.Qt.MatchRecursive):
+        for other in self.tree[col].model().findItems(nam_item, Qt.MatchFixedString | Qt.MatchRecursive):
             
             newI=self.tree[col].model().indexFromItem(other)
             print("We're in Row")
             print(newI.row())
-        #other = self.tree['col1'].model().findItems(p2[nam_item], QtCore.Qt.MatchFixedString)
+        #other = self.tree['col1'].model().findItems(p2[nam_item], Qt.MatchFixedString)
         #print(item)
         #newIndex=self.tree['col1'].model().indexFromItem(item)
 
@@ -558,27 +557,27 @@ class TestDialog(QtWidgets.QDialog):
                 print(p2[nam_item])
                 print(parent[nam_item])
                 print('****************Not equal0')
-                self.tree[col].model().setData(newI, color_diff, QtCore.Qt.ForegroundRole)
+                self.tree[col].model().setData(newI, color_diff, Qt.ForegroundRole)
             else:
                 print('tttttttttttttttesting2b')
                 print(p2[nam_item])
                 print(parent[nam_item])
                 print('****************equal0')
-                self.tree[col].model().setData(newI, color_chng, QtCore.Qt.ForegroundRole)
+                self.tree[col].model().setData(newI, color_chng, Qt.ForegroundRole)
                 #TODO: insert arrow
             
-        pi0 = self.tree[col].model().findItems(nam_block, QtCore.Qt.MatchFixedString) 
-        pi1 = self.tree[col_alt].model().findItems(nam_block, QtCore.Qt.MatchFixedString)
+        pi0 = self.tree[col].model().findItems(nam_block, Qt.MatchFixedString) 
+        pi1 = self.tree[col_alt].model().findItems(nam_block, Qt.MatchFixedString)
         in0 =self.tree[col].model().indexFromItem(pi0[0])
         in1 =self.tree[col_alt].model().indexFromItem(pi1[0])    
         
         if self.data[col][nam_block] != self.data[col_alt][nam_block]:
 
-            self.tree[col].model().setData(in0, color_diff, QtCore.Qt.ForegroundRole)
-            self.tree[col_alt].model().setData(in1, color_diff, QtCore.Qt.ForegroundRole)
+            self.tree[col].model().setData(in0, color_diff, Qt.ForegroundRole)
+            self.tree[col_alt].model().setData(in1, color_diff, Qt.ForegroundRole)
         else:
-            self.tree[col].model().setData(in0, color_chn1, QtCore.Qt.ForegroundRole)
-            self.tree[col_alt].model().setData(in1, color_chn1, QtCore.Qt.ForegroundRole)   
+            self.tree[col].model().setData(in0, color_chn1, Qt.ForegroundRole)
+            self.tree[col_alt].model().setData(in1, color_chn1, Qt.ForegroundRole)   
                     
                       
         # TODO check item.text is right type or None
@@ -607,10 +606,10 @@ class TestDialog(QtWidgets.QDialog):
             self.treeView.expand(mi)
             self.treeView.scrollTo(mi)
         else:
-            QtWidgets.QMessageBox.information(
+            QMessageBox.information(
                 self,
-                QtWidgets.QCoreApplication.translate("DataStorageBrowser", "No (more) matches!"),
-                QtWidgets.QCoreApplication.translate(
+                QCoreApplication.translate("DataStorageBrowser", "No (more) matches!"),
+                QCoreApplication.translate(
                     "DataStorageBrowser", "No (more) matches found! Change you search text and try again!"
                 ),
             )
@@ -624,7 +623,7 @@ class TestDialog(QtWidgets.QDialog):
         # When you call getOpenFileName, a file picker dialog is created
         # and if the user selects a file, it's path is returned, and if not
         # (ie, the user cancels the operation) None is returned
-        fname = QtWidgets.QFileDialog.getSaveFileName(self, 'Select output file', '', selectedFilter='*.ncml')[0]
+        fname = QFileDialog.getSaveFileName(self, 'Select output file', '', selectedFilter='*.ncml')[0]
         if fname:
             self.filename = fname #returns a QString
             self.top_outfile_name.setText(str(fname))
