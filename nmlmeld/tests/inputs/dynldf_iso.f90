@@ -23,7 +23,7 @@ MODULE dynldf_iso
    USE ldfdyn          ! lateral diffusion: eddy viscosity coef.
    USE ldftra          ! lateral physics: eddy diffusivity
    USE zdf_oce         ! ocean vertical physics
-   USE ldfslp          ! iso-neutral slopes 
+   USE ldfslp          ! iso-neutral slopes
    !
    USE in_out_manager  ! I/O manager
    USE lib_mpp         ! MPP library
@@ -37,8 +37,8 @@ MODULE dynldf_iso
    PUBLIC   dyn_ldf_iso_alloc     ! called by nemogcm.F90
 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   akzu, akzv   !: vertical component of rotated lateral viscosity
-   
-   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:) :: zfuw, zdiu, zdju, zdj1u   ! 2D workspace (dyn_ldf_iso) 
+
+   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:) :: zfuw, zdiu, zdju, zdj1u   ! 2D workspace (dyn_ldf_iso)
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:) :: zfvw, zdiv, zdjv, zdj1v   !  -      -
 
    !! * Substitutions
@@ -50,7 +50,7 @@ MODULE dynldf_iso
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -64,7 +64,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE dyn_ldf_iso_alloc  ***
       !!----------------------------------------------------------------------
-      ALLOCATE( akzu(jpi,jpj,jpk) , zfuw(jpi,jpk) , zdiu(jpi,jpk) , zdju(jpi,jpk) , zdj1u(jpi,jpk) ,     & 
+      ALLOCATE( akzu(jpi,jpj,jpk) , zfuw(jpi,jpk) , zdiu(jpi,jpk) , zdju(jpi,jpk) , zdj1u(jpi,jpk) ,     &
          &      akzv(jpi,jpj,jpk) , zfvw(jpi,jpk) , zdiv(jpi,jpk) , zdjv(jpi,jpk) , zdj1v(jpi,jpk) , STAT=dyn_ldf_iso_alloc )
          !
       IF( dyn_ldf_iso_alloc /= 0 )   CALL ctl_warn('dyn_ldf_iso_alloc: array allocate failed.')
@@ -74,7 +74,7 @@ CONTAINS
    SUBROUTINE dyn_ldf_iso( kt )
       !!----------------------------------------------------------------------
       !!                     ***  ROUTINE dyn_ldf_iso  ***
-      !!                       
+      !!
       !! ** Purpose :   Compute the before trend of the rotated laplacian
       !!      operator of lateral momentum diffusion except the diagonal
       !!      vertical term that will be computed in dynzdf module. Add it
@@ -150,9 +150,9 @@ CONTAINS
          CALL lbc_lnk_multi( uslp , 'U', -1., vslp , 'V', -1., wslpi, 'W', -1., wslpj, 'W', -1. )
          !
        ENDIF
-         
+
       zaht_0 = 0.5_wp * rn_Ud * rn_Ld                  ! aht_0 from namtra_ldf = zaht_max
-      
+
       !                                                ! ===============
       DO jk = 1, jpkm1                                 ! Horizontal slab
          !                                             ! ===============
@@ -174,9 +174,9 @@ CONTAINS
          ENDIF
 
          !                               -----f-----
-         ! Horizontal fluxes on U             |  
+         ! Horizontal fluxes on U             |
          ! --------------------===        t   u   t
-         !                                    |  
+         !                                    |
          ! i-flux at t-point             -----f-----
 
          IF( ln_zps ) THEN      ! z-coordinate - partial steps : min(e3u)
@@ -188,7 +188,7 @@ CONTAINS
                      &                 + umask(ji-1,jj,jk+1)+umask(ji,jj,jk  ) , 1._wp )
 
                   zcof1 = - zaht_0 * e2t(ji,jj) * zmskt * 0.5  * ( uslp(ji-1,jj,jk) + uslp(ji,jj,jk) )
-   
+
                   ziut(ji,jj) = (  zabe1 * ( ub(ji,jj,jk) - ub(ji-1,jj,jk) )    &
                      &           + zcof1 * ( zdku (ji,jj) + zdk1u(ji-1,jj)      &
                      &                      +zdk1u(ji,jj) + zdku (ji-1,jj) )  ) * tmask(ji,jj,jk)
@@ -305,7 +305,7 @@ CONTAINS
       DO jj = 2, jpjm1                                 !  Vertical slab
          !                                             ! ===============
 
- 
+
          ! I. vertical trends associated with the lateral mixing
          ! =====================================================
          !  (excluding the vertical flux proportional to dk[t]

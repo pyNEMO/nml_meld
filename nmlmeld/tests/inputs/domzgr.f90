@@ -7,7 +7,7 @@ MODULE domzgr
    !!==============================================================================
    !! History :  OPA  ! 1995-12  (G. Madec)  Original code : s vertical coordinate
    !!                 ! 1997-07  (G. Madec)  lbc_lnk call
-   !!                 ! 1997-04  (J.-O. Beismann) 
+   !!                 ! 1997-04  (J.-O. Beismann)
    !!            8.5  ! 2002-09  (A. Bozec, G. Madec)  F90: Free form and module
    !!             -   ! 2002-09  (A. de Miranda)  rigid-lid + islands
    !!  NEMO      1.0  ! 2003-08  (G. Madec)  F90: Free form and module
@@ -17,8 +17,8 @@ MODULE domzgr
    !!            3.2  ! 2009-07  (R. Benshila) Suppression of rigid-lid option
    !!            3.3  ! 2010-11  (G. Madec) add mbk. arrays associated to the deepest ocean level
    !!            3.4  ! 2012-08  (J. Siddorn) added Siddorn and Furner stretching function
-   !!            3.4  ! 2012-12  (R. Bourdalle-Badie and G. Reffray)  modify C1D case  
-   !!            3.6  ! 2014-11  (P. Mathiot and C. Harris) add ice shelf capabilitye  
+   !!            3.4  ! 2012-12  (R. Bourdalle-Badie and G. Reffray)  modify C1D case
+   !!            3.6  ! 2014-11  (P. Mathiot and C. Harris) add ice shelf capabilitye
    !!            3.?  ! 2015-11  (H. Liu) Modifications for Wetting/Drying
    !!----------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ MODULE domzgr
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -61,22 +61,22 @@ MODULE domzgr
    !! $Id: domzgr.F90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
-CONTAINS       
+CONTAINS
 
    SUBROUTINE dom_zgr( k_top, k_bot )
       !!----------------------------------------------------------------------
       !!                ***  ROUTINE dom_zgr  ***
-      !!                   
-      !! ** Purpose :   set the depth of model levels and the resulting 
+      !!
+      !! ** Purpose :   set the depth of model levels and the resulting
       !!              vertical scale factors.
       !!
       !! ** Method  : - reference 1D vertical coordinate (gdep._1d, e3._1d)
       !!              - read/set ocean depth and ocean levels (bathy, mbathy)
-      !!              - vertical coordinate (gdep., e3.) depending on the 
+      !!              - vertical coordinate (gdep., e3.) depending on the
       !!                coordinate chosen :
-      !!                   ln_zco=T   z-coordinate   
+      !!                   ln_zco=T   z-coordinate
       !!                   ln_zps=T   z-coordinate with partial steps
-      !!                   ln_zco=T   s-coordinate 
+      !!                   ln_zco=T   s-coordinate
       !!
       !! ** Action  :   define gdep., e3., mbathy and bathy
       !!----------------------------------------------------------------------
@@ -100,9 +100,9 @@ CONTAINS
          IF(lwp) WRITE(numout,*)
          IF(lwp) WRITE(numout,*) '   ==>>>   Read vertical mesh in ', TRIM( cn_domcfg ), ' file'
          !
-         CALL zgr_read   ( ln_zco  , ln_zps  , ln_sco, ln_isfcav,   & 
+         CALL zgr_read   ( ln_zco  , ln_zps  , ln_sco, ln_isfcav,   &
             &              gdept_1d, gdepw_1d, e3t_1d, e3w_1d   ,   &    ! 1D gridpoints depth
-            &              gdept_0 , gdepw_0                    ,   &    ! gridpoints depth 
+            &              gdept_0 , gdepw_0                    ,   &    ! gridpoints depth
             &              e3t_0   , e3u_0   , e3v_0 , e3f_0    ,   &    ! vertical scale factors
             &              e3w_0   , e3uw_0  , e3vw_0           ,   &    ! vertical scale factors
             &              k_top   , k_bot            )                  ! 1st & last ocean level
@@ -111,9 +111,9 @@ CONTAINS
          IF(lwp) WRITE(numout,*)
          IF(lwp) WRITE(numout,*) '          User defined vertical mesh (usr_def_zgr)'
          !
-         CALL usr_def_zgr( ln_zco  , ln_zps  , ln_sco, ln_isfcav,   & 
+         CALL usr_def_zgr( ln_zco  , ln_zps  , ln_sco, ln_isfcav,   &
             &              gdept_1d, gdepw_1d, e3t_1d, e3w_1d   ,   &    ! 1D gridpoints depth
-            &              gdept_0 , gdepw_0                    ,   &    ! gridpoints depth 
+            &              gdept_0 , gdepw_0                    ,   &    ! gridpoints depth
             &              e3t_0   , e3u_0   , e3v_0 , e3f_0    ,   &    ! vertical scale factors
             &              e3w_0   , e3uw_0  , e3vw_0           ,   &    ! vertical scale factors
             &              k_top   , k_bot            )                  ! 1st & last ocean level
@@ -127,7 +127,7 @@ CONTAINS
          gde3w_0(:,:,jk) = gde3w_0(:,:,jk-1) + e3w_0(:,:,jk)
       END DO
       !
-      ! Any closed seas (defined by closea_mask > 0 in domain_cfg file) to be filled 
+      ! Any closed seas (defined by closea_mask > 0 in domain_cfg file) to be filled
       ! in at runtime if ln_closea=.false.
       IF( .NOT.ln_closea )   CALL clo_bat( k_top, k_bot )
       !
@@ -149,7 +149,7 @@ CONTAINS
 
       !                                ! top/bottom ocean level indices for t-, u- and v-points (f-point also for top)
       CALL zgr_top_bot( k_top, k_bot )      ! with a minimum value set to 1
-      
+
 
       !                                ! deepest/shallowest W level Above/Below ~10m
 !!gm BUG in s-coordinate this does not work!
@@ -244,9 +244,9 @@ CONTAINS
          & iom_varid( inum, 'gdepw_1d', ldstop = .FALSE. ) > 0  .AND.  &
          & iom_varid( inum, 'gdept_0' , ldstop = .FALSE. ) > 0  .AND.  &
          & iom_varid( inum, 'gdepw_0' , ldstop = .FALSE. ) > 0    ) THEN
-         CALL ctl_warn( 'zgr_read : old definition of depths and scale factors used ', & 
+         CALL ctl_warn( 'zgr_read : old definition of depths and scale factors used ', &
             &           '           depths at t- and w-points read in the domain configuration file')
-         CALL iom_get( inum, jpdom_unknown, 'gdept_1d', pdept_1d )   
+         CALL iom_get( inum, jpdom_unknown, 'gdept_1d', pdept_1d )
          CALL iom_get( inum, jpdom_unknown, 'gdepw_1d', pdepw_1d )
          CALL iom_get( inum, jpdom_data   , 'gdept_0' , pdept , lrowattr=ln_use_jattr )
          CALL iom_get( inum, jpdom_data   , 'gdepw_0' , pdepw , lrowattr=ln_use_jattr )
@@ -284,10 +284,10 @@ CONTAINS
       !!
       !! ** Method  :   computes from k_top and k_bot with a minimum value of 1 over land
       !!
-      !! ** Action  :   mikt, miku, mikv :   vertical indices of the shallowest 
+      !! ** Action  :   mikt, miku, mikv :   vertical indices of the shallowest
       !!                                     ocean level at t-, u- & v-points
       !!                                     (min value = 1)
-      !! ** Action  :   mbkt, mbku, mbkv :   vertical indices of the deeptest 
+      !! ** Action  :   mbkt, mbku, mbkv :   vertical indices of the deeptest
       !!                                     ocean level at t-, u- & v-points
       !!                                     (min value = 1 over land)
       !!----------------------------------------------------------------------
@@ -304,7 +304,7 @@ CONTAINS
       mikt(:,:) = MAX( k_top(:,:) , 1 )    ! top    ocean k-index of T-level (=1 over land)
       !
       mbkt(:,:) = MAX( k_bot(:,:) , 1 )    ! bottom ocean k-index of T-level (=1 over land)
- 
+
       !                                    ! N.B.  top     k-index of W-level = mikt
       !                                    !       bottom  k-index of W-level = mbkt+1
       DO jj = 1, jpjm1
@@ -317,7 +317,7 @@ CONTAINS
             mbkv(ji,jj) = MIN(  mbkt(ji  ,jj+1) , mbkt(ji,jj)  )
          END DO
       END DO
-      ! converte into REAL to use lbc_lnk ; impose a min value of 1 as a zero can be set in lbclnk 
+      ! converte into REAL to use lbc_lnk ; impose a min value of 1 as a zero can be set in lbclnk
       zk(:,:) = REAL( miku(:,:), wp )   ;   CALL lbc_lnk( zk, 'U', 1. )   ;   miku(:,:) = MAX( NINT( zk(:,:) ), 1 )
       zk(:,:) = REAL( mikv(:,:), wp )   ;   CALL lbc_lnk( zk, 'V', 1. )   ;   mikv(:,:) = MAX( NINT( zk(:,:) ), 1 )
       zk(:,:) = REAL( mikf(:,:), wp )   ;   CALL lbc_lnk( zk, 'F', 1. )   ;   mikf(:,:) = MAX( NINT( zk(:,:) ), 1 )

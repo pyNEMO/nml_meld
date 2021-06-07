@@ -11,7 +11,7 @@ MODULE dynadv_cen2
    !!----------------------------------------------------------------------
 
    !!----------------------------------------------------------------------
-   !!   dyn_adv_cen2  : flux form momentum advection (ln_dynadv_cen2=T) using a 2nd order centred scheme  
+   !!   dyn_adv_cen2  : flux form momentum advection (ln_dynadv_cen2=T) using a 2nd order centred scheme
    !!----------------------------------------------------------------------
    USE oce            ! ocean dynamics and tracers
    USE dom_oce        ! ocean space and time domain
@@ -36,7 +36,7 @@ MODULE dynadv_cen2
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -53,7 +53,7 @@ CONTAINS
       !! ** Purpose :   Compute the now momentum advection trend in flux form
       !!              and the general trend of the momentum equation.
       !!
-      !! ** Method  :   Trend evaluated using now fields (centered in time) 
+      !! ** Method  :   Trend evaluated using now fields (centered in time)
       !!
       !! ** Action  :   (ua,va) updated with the now vorticity term trend
       !!----------------------------------------------------------------------
@@ -136,7 +136,7 @@ CONTAINS
          END DO
       END DO
       DO jk = 1, jpkm1                    ! divergence of vertical momentum flux divergence
-         DO jj = 2, jpjm1 
+         DO jj = 2, jpjm1
             DO ji = 2, jpim1   ! vector opt.
                ua(ji,jj,jk) = ua(ji,jj,jk) - ( zfu_uw(ji,jj,jk) - zfu_uw(ji,jj,jk+1) ) * r1_e1e2u(ji,jj) / e3u_n(ji,jj,jk)
                va(ji,jj,jk) = va(ji,jj,jk) - ( zfv_vw(ji,jj,jk) - zfv_vw(ji,jj,jk+1) ) * r1_e1e2v(ji,jj) / e3v_n(ji,jj,jk)

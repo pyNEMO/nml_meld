@@ -15,12 +15,12 @@ MODULE dynzdf
    !!----------------------------------------------------------------------
    USE oce            ! ocean dynamics and tracers variables
    USE phycst         ! physical constants
-   USE dom_oce        ! ocean space and time domain variables 
+   USE dom_oce        ! ocean space and time domain variables
    USE sbc_oce        ! surface boundary condition: ocean
    USE zdf_oce        ! ocean vertical physics variables
    USE zdfdrg         ! vertical physics: top/bottom drag coef.
    USE dynadv    ,ONLY: ln_dynadv_vec    ! dynamics: advection form
-   USE dynldf_iso,ONLY: akzu, akzv       ! dynamics: vertical component of rotated lateral mixing 
+   USE dynldf_iso,ONLY: akzu, akzv       ! dynamics: vertical component of rotated lateral mixing
    USE ldfdyn         ! lateral diffusion: eddy viscosity coef. and type of operator
    USE trd_oce        ! trends: ocean variables
    USE trddyn         ! trend manager: dynamics
@@ -35,7 +35,7 @@ MODULE dynzdf
 
    PUBLIC   dyn_zdf   !  routine called by step.F90
 
-   REAL(wp) ::  r_vvl     ! non-linear free surface indicator: =0 if ln_linssh=T, =1 otherwise 
+   REAL(wp) ::  r_vvl     ! non-linear free surface indicator: =0 if ln_linssh=T, =1 otherwise
 
    !! * Substitutions
    !!----------------------------------------------------------------------
@@ -46,7 +46,7 @@ MODULE dynzdf
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -55,26 +55,26 @@ MODULE dynzdf
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
 CONTAINS
-   
+
    SUBROUTINE dyn_zdf( kt )
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE dyn_zdf  ***
       !!
       !! ** Purpose :   compute the trend due to the vert. momentum diffusion
-      !!              together with the Leap-Frog time stepping using an 
+      !!              together with the Leap-Frog time stepping using an
       !!              implicit scheme.
       !!
       !! ** Method  :  - Leap-Frog time stepping on all trends but the vertical mixing
       !!         ua =         ub + 2*dt *       ua             vector form or linear free surf.
       !!         ua = ( e3u_b*ub + 2*dt * e3u_n*ua ) / e3u_a   otherwise
       !!               - update the after velocity with the implicit vertical mixing.
-      !!      This requires to solver the following system: 
+      !!      This requires to solver the following system:
       !!         ua = ua + 1/e3u_a dk+1[ mi(avm) / e3uw_a dk[ua] ]
       !!      with the following surface/top/bottom boundary condition:
       !!      surface: wind stress input (averaged over kt-1/2 & kt+1/2)
       !!      top & bottom : top stress (iceshelf-ocean) & bottom stress (cf zdfdrg.F90)
       !!
-      !! ** Action :   (ua,va)   after velocity 
+      !! ** Action :   (ua,va)   after velocity
       !!---------------------------------------------------------------------
       INTEGER, INTENT(in) ::   kt   ! ocean time-step index
       !
@@ -82,7 +82,7 @@ CONTAINS
       INTEGER  ::   iku, ikv           ! local integers
       REAL(wp) ::   zzwi, ze3ua, zdt   ! local scalars
       REAL(wp) ::   zzws, ze3va        !   -      -
-      REAL(wp), DIMENSION(jpi,jpj,jpk)        ::  zwi, zwd, zws   ! 3D workspace 
+      REAL(wp), DIMENSION(jpi,jpj,jpk)        ::  zwi, zwd, zws   ! 3D workspace
       REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   ztrdu, ztrdv   !  -      -
       !!---------------------------------------------------------------------
       !
@@ -107,7 +107,7 @@ CONTAINS
       !
       !
       IF( l_trddyn )   THEN         !* temporary save of ta and sa trends
-         ALLOCATE( ztrdu(jpi,jpj,jpk), ztrdv(jpi,jpj,jpk) ) 
+         ALLOCATE( ztrdu(jpi,jpj,jpk), ztrdv(jpi,jpj,jpk) )
          ztrdu(:,:,:) = ua(:,:,:)
          ztrdv(:,:,:) = va(:,:,:)
       ENDIF
@@ -128,10 +128,10 @@ CONTAINS
                &          + r2dt * e3v_n(:,:,jk) * va(:,:,jk)  ) / e3v_a(:,:,jk) * vmask(:,:,jk)
          END DO
       ENDIF
-      !                    ! add top/bottom friction 
+      !                    ! add top/bottom friction
       !     With split-explicit free surface, barotropic stress is treated explicitly Update velocities at the bottom.
-      !     J. Chanut: The bottom stress is computed considering after barotropic velocities, which does 
-      !                not lead to the effective stress seen over the whole barotropic loop. 
+      !     J. Chanut: The bottom stress is computed considering after barotropic velocities, which does
+      !                not lead to the effective stress seen over the whole barotropic loop.
       !     G. Madec : in linear free surface, e3u_a = e3u_n = e3u_0, so systematic use of e3u_a
       IF( ln_drgimp .AND. ln_dynspg_ts ) THEN
          DO jk = 1, jpkm1        ! remove barotropic velocities
@@ -140,7 +140,7 @@ CONTAINS
          END DO
          DO jj = 2, jpjm1        ! Add bottom/top stress due to barotropic component only
             DO ji = 2, jpim1   ! vector opt.
-               iku = mbku(ji,jj)         ! ocean bottom level at u- and v-points 
+               iku = mbku(ji,jj)         ! ocean bottom level at u- and v-points
                ikv = mbkv(ji,jj)         ! (deepest ocean u- and v-points)
                ze3ua =  ( 1._wp - r_vvl ) * e3u_n(ji,jj,iku) + r_vvl * e3u_a(ji,jj,iku)
                ze3va =  ( 1._wp - r_vvl ) * e3v_n(ji,jj,ikv) + r_vvl * e3v_a(ji,jj,ikv)
@@ -149,9 +149,9 @@ CONTAINS
             END DO
          END DO
          IF( ln_isfcav ) THEN    ! Ocean cavities (ISF)
-            DO jj = 2, jpjm1        
+            DO jj = 2, jpjm1
                DO ji = 2, jpim1   ! vector opt.
-                  iku = miku(ji,jj)         ! top ocean level at u- and v-points 
+                  iku = miku(ji,jj)         ! top ocean level at u- and v-points
                   ikv = mikv(ji,jj)         ! (first wet ocean u- and v-points)
                   ze3ua =  ( 1._wp - r_vvl ) * e3u_n(ji,jj,iku) + r_vvl * e3u_a(ji,jj,iku)
                   ze3va =  ( 1._wp - r_vvl ) * e3v_n(ji,jj,ikv) + r_vvl * e3v_a(ji,jj,ikv)
@@ -169,7 +169,7 @@ CONTAINS
       SELECT CASE( nldf_dyn )
       CASE( np_lap_i )           ! rotated lateral mixing: add its vertical mixing (akzu)
          DO jk = 1, jpkm1
-            DO jj = 2, jpjm1 
+            DO jj = 2, jpjm1
                DO ji = 2, jpim1   ! vector opt.
                   ze3ua =  ( 1._wp - r_vvl ) * e3u_n(ji,jj,jk) + r_vvl * e3u_a(ji,jj,jk)   ! after scale factor at T-point
                   zzwi = - zdt * ( avm(ji+1,jj,jk  ) + avm(ji,jj,jk  ) + akzu(ji,jj,jk  ) )   &
@@ -184,7 +184,7 @@ CONTAINS
          END DO
       CASE DEFAULT               ! iso-level lateral mixing
          DO jk = 1, jpkm1
-            DO jj = 2, jpjm1 
+            DO jj = 2, jpjm1
                DO ji = 2, jpim1   ! vector opt.
                   ze3ua =  ( 1._wp - r_vvl ) * e3u_n(ji,jj,jk) + r_vvl * e3u_a(ji,jj,jk)   ! after scale factor at T-point
                   zzwi = - zdt * ( avm(ji+1,jj,jk  ) + avm(ji,jj,jk  ) ) / ( ze3ua * e3uw_n(ji,jj,jk  ) ) * wumask(ji,jj,jk  )
@@ -222,7 +222,7 @@ CONTAINS
             DO jj = 2, jpjm1
                DO ji = 2, jpim1
                   !!gm   top Cd is masked (=0 outside cavities) no need of test on mik>=2  ==>> it has been suppressed
-                  iku = miku(ji,jj)       ! ocean top level at u- and v-points 
+                  iku = miku(ji,jj)       ! ocean top level at u- and v-points
                   ze3ua =  ( 1._wp - r_vvl ) * e3u_n(ji,jj,iku) + r_vvl * e3u_a(ji,jj,iku)   ! after scale factor at T-point
                   zwd(ji,jj,iku) = zwd(ji,jj,iku) - r2dt * 0.5*( rCdU_top(ji+1,jj)+rCdU_top(ji,jj) ) / ze3ua
                END DO
@@ -246,7 +246,7 @@ CONTAINS
       !-----------------------------------------------------------------------
       !
       DO jk = 2, jpkm1        !==  First recurrence : Dk = Dk - Lk * Uk-1 / Dk-1   (increasing k)  ==
-         DO jj = 2, jpjm1   
+         DO jj = 2, jpjm1
             DO ji = 2, jpim1   ! vector opt.
                zwd(ji,jj,jk) = zwd(ji,jj,jk) - zwi(ji,jj,jk) * zws(ji,jj,jk-1) / zwd(ji,jj,jk-1)
             END DO
@@ -255,9 +255,9 @@ CONTAINS
       !
       DO jj = 2, jpjm1        !==  second recurrence:    SOLk = RHSk - Lk / Dk-1  Lk-1  ==!
          DO ji = 2, jpim1   ! vector opt.
-            ze3ua =  ( 1._wp - r_vvl ) * e3u_n(ji,jj,1) + r_vvl * e3u_a(ji,jj,1) 
+            ze3ua =  ( 1._wp - r_vvl ) * e3u_n(ji,jj,1) + r_vvl * e3u_a(ji,jj,1)
             ua(ji,jj,1) = ua(ji,jj,1) + r2dt * 0.5_wp * ( utau_b(ji,jj) + utau(ji,jj) )   &
-               &                                      / ( ze3ua * rau0 ) * umask(ji,jj,1) 
+               &                                      / ( ze3ua * rau0 ) * umask(ji,jj,1)
          END DO
       END DO
       DO jk = 2, jpkm1
@@ -288,7 +288,7 @@ CONTAINS
       SELECT CASE( nldf_dyn )
       CASE( np_lap_i )           ! rotated lateral mixing: add its vertical mixing (akzu)
          DO jk = 1, jpkm1
-            DO jj = 2, jpjm1   
+            DO jj = 2, jpjm1
                DO ji = 2, jpim1   ! vector opt.
                   ze3va =  ( 1._wp - r_vvl ) * e3v_n(ji,jj,jk) + r_vvl * e3v_a(ji,jj,jk)   ! after scale factor at T-point
                   zzwi = - zdt * ( avm(ji,jj+1,jk  ) + avm(ji,jj,jk  ) + akzv(ji,jj,jk  ) )   &
@@ -303,7 +303,7 @@ CONTAINS
          END DO
       CASE DEFAULT               ! iso-level lateral mixing
          DO jk = 1, jpkm1
-            DO jj = 2, jpjm1   
+            DO jj = 2, jpjm1
                DO ji = 2, jpim1   ! vector opt.
                   ze3va =  ( 1._wp - r_vvl ) * e3v_n(ji,jj,jk) + r_vvl * e3v_a(ji,jj,jk)   ! after scale factor at T-point
                   zzwi = - zdt * ( avm(ji,jj+1,jk  ) + avm(ji,jj,jk  ) ) / ( ze3va * e3vw_n(ji,jj,jk  ) ) * wvmask(ji,jj,jk  )
@@ -333,7 +333,7 @@ CONTAINS
             DO ji = 2, jpim1
                ikv = mbkv(ji,jj)       ! (deepest ocean u- and v-points)
                ze3va =  ( 1._wp - r_vvl ) * e3v_n(ji,jj,ikv) + r_vvl * e3v_a(ji,jj,ikv)   ! after scale factor at T-point
-               zwd(ji,jj,ikv) = zwd(ji,jj,ikv) - r2dt * 0.5*( rCdU_bot(ji,jj+1)+rCdU_bot(ji,jj) ) / ze3va           
+               zwd(ji,jj,ikv) = zwd(ji,jj,ikv) - r2dt * 0.5*( rCdU_bot(ji,jj+1)+rCdU_bot(ji,jj) ) / ze3va
             END DO
          END DO
          IF ( ln_isfcav ) THEN
@@ -363,7 +363,7 @@ CONTAINS
       !-----------------------------------------------------------------------
       !
       DO jk = 2, jpkm1        !==  First recurrence : Dk = Dk - Lk * Uk-1 / Dk-1   (increasing k)  ==
-         DO jj = 2, jpjm1   
+         DO jj = 2, jpjm1
             DO ji = 2, jpim1   ! vector opt.
                zwd(ji,jj,jk) = zwd(ji,jj,jk) - zwi(ji,jj,jk) * zws(ji,jj,jk-1) / zwd(ji,jj,jk-1)
             END DO
@@ -371,10 +371,10 @@ CONTAINS
       END DO
       !
       DO jj = 2, jpjm1        !==  second recurrence:    SOLk = RHSk - Lk / Dk-1  Lk-1  ==!
-         DO ji = 2, jpim1   ! vector opt.          
-            ze3va =  ( 1._wp - r_vvl ) * e3v_n(ji,jj,1) + r_vvl * e3v_a(ji,jj,1) 
+         DO ji = 2, jpim1   ! vector opt.
+            ze3va =  ( 1._wp - r_vvl ) * e3v_n(ji,jj,1) + r_vvl * e3v_a(ji,jj,1)
             va(ji,jj,1) = va(ji,jj,1) + r2dt * 0.5_wp * ( vtau_b(ji,jj) + vtau(ji,jj) )   &
-               &                                      / ( ze3va * rau0 ) * vmask(ji,jj,1) 
+               &                                      / ( ze3va * rau0 ) * vmask(ji,jj,1)
          END DO
       END DO
       DO jk = 2, jpkm1
@@ -402,7 +402,7 @@ CONTAINS
          ztrdu(:,:,:) = ( ua(:,:,:) - ub(:,:,:) ) / r2dt - ztrdu(:,:,:)
          ztrdv(:,:,:) = ( va(:,:,:) - vb(:,:,:) ) / r2dt - ztrdv(:,:,:)
          CALL trd_dyn( ztrdu, ztrdv, jpdyn_zdf, kt )
-         DEALLOCATE( ztrdu, ztrdv ) 
+         DEALLOCATE( ztrdu, ztrdv )
       ENDIF
       !                                          ! print mean trends (used for debugging)
       IF(ln_ctl)   CALL prt_ctl( tab3d_1=ua, clinfo1=' zdf  - Ua: ', mask1=umask,               &

@@ -28,7 +28,7 @@ MODULE bdyini
    !
    USE in_out_manager ! I/O units
    USE lbclnk         ! ocean lateral boundary conditions (or mpp link)
-   USE lib_mpp        ! for mpp_sum  
+   USE lib_mpp        ! for mpp_sum
    USE iom            ! I/O
 
    IMPLICIT NONE
@@ -36,18 +36,18 @@ MODULE bdyini
 
    PUBLIC   bdy_init   ! routine called in nemo_init
 
-   INTEGER, PARAMETER ::   jp_nseg = 100   ! 
+   INTEGER, PARAMETER ::   jp_nseg = 100   !
    INTEGER, PARAMETER ::   nrimmax =  20   ! maximum rimwidth in structured
                                                ! open boundary data files
    ! Straight open boundary segment parameters:
-   INTEGER  ::   nbdysege, nbdysegw, nbdysegn, nbdysegs 
+   INTEGER  ::   nbdysege, nbdysegw, nbdysegn, nbdysegs
    INTEGER, DIMENSION(jp_nseg) ::   jpieob, jpjedt, jpjeft, npckge   !
    INTEGER, DIMENSION(jp_nseg) ::   jpiwob, jpjwdt, jpjwft, npckgw   !
    INTEGER, DIMENSION(jp_nseg) ::   jpjnob, jpindt, jpinft, npckgn   !
    INTEGER, DIMENSION(jp_nseg) ::   jpjsob, jpisdt, jpisft, npckgs   !
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: bdyini.F90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: bdyini.F90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
 CONTAINS
@@ -87,7 +87,7 @@ CONTAINS
       IF(lwm) WRITE ( numond, nambdy )
 
       IF( .NOT. Agrif_Root() ) ln_bdy = .FALSE.   ! forced for Agrif children
-      
+
       ! -----------------------------------------
       ! unstructured open boundaries use control
       ! -----------------------------------------
@@ -118,14 +118,14 @@ CONTAINS
    SUBROUTINE bdy_segs
       !!----------------------------------------------------------------------
       !!                 ***  ROUTINE bdy_init  ***
-      !!         
+      !!
       !! ** Purpose :   Definition of unstructured open boundaries.
       !!
-      !! ** Method  :   Read initialization arrays (mask, indices) to identify 
+      !! ** Method  :   Read initialization arrays (mask, indices) to identify
       !!              an unstructured open boundary
       !!
       !! ** Input   :  bdy_init.nc, input file for unstructured open boundaries
-      !!----------------------------------------------------------------------      
+      !!----------------------------------------------------------------------
       INTEGER  ::   ib_bdy, ii, ij, ik, igrd, ib, ir, iseg ! dummy loop indices
       INTEGER  ::   icount, icountr, ibr_max, ilen1, ibm1  ! local integers
       INTEGER  ::   iwe, ies, iso, ino, inum, id_dummy     !   -       -
@@ -138,7 +138,7 @@ CONTAINS
       REAL(wp), POINTER, DIMENSION(:,:)       ::   pmask    ! pointer to 2D mask fields
       REAL(wp) ::   zefl, zwfl, znfl, zsfl                 ! local scalars
       INTEGER, DIMENSION (2)                  ::   kdimsz
-      INTEGER, DIMENSION(jpbgrd,jp_bdy)       ::   nblendta         ! Length of index arrays 
+      INTEGER, DIMENSION(jpbgrd,jp_bdy)       ::   nblendta         ! Length of index arrays
       INTEGER, ALLOCATABLE, DIMENSION(:,:,:)  ::   nbidta, nbjdta   ! Index arrays: i and j indices of bdy dta
       INTEGER, ALLOCATABLE, DIMENSION(:,:,:)  ::   nbrdta           ! Discrete distance from rim points
       CHARACTER(LEN=1),DIMENSION(jpbgrd)      ::   cgrid
@@ -147,7 +147,7 @@ CONTAINS
       INTEGER :: iw_b(4), ie_b(4), is_b(4), in_b(4)                ! Arrays for neighbours coordinates
       REAL(wp), TARGET, DIMENSION(jpi,jpj) ::   zfmask  ! temporary fmask array excluding coastal boundary condition (shlat)
       !!
-      CHARACTER(LEN=1)                     ::   ctypebdy   !     -        - 
+      CHARACTER(LEN=1)                     ::   ctypebdy   !     -        -
       INTEGER                              ::   nbdyind, nbdybeg, nbdyend
       !!
       NAMELIST/nambdy_index/ ctypebdy, nbdyind, nbdybeg, nbdyend
@@ -162,15 +162,15 @@ CONTAINS
       IF( jperio /= 0 )   CALL ctl_stop( 'bdy_segs: Cyclic or symmetric,',   &
          &                               ' and general open boundary condition are not compatible' )
 
-      IF( nb_bdy == 0 ) THEN 
+      IF( nb_bdy == 0 ) THEN
         IF(lwp) WRITE(numout,*) 'nb_bdy = 0, NO OPEN BOUNDARIES APPLIED.'
       ELSE
         IF(lwp) WRITE(numout,*) 'Number of open boundary sets : ', nb_bdy
       ENDIF
 
       DO ib_bdy = 1,nb_bdy
-        IF(lwp) WRITE(numout,*) ' ' 
-        IF(lwp) WRITE(numout,*) '------ Open boundary data set ',ib_bdy,'------' 
+        IF(lwp) WRITE(numout,*) ' '
+        IF(lwp) WRITE(numout,*) '------ Open boundary data set ',ib_bdy,'------'
 
         IF( ln_coords_file(ib_bdy) ) THEN
            IF(lwp) WRITE(numout,*) 'Boundary definition read from file '//TRIM(cn_coords_file(ib_bdy))
@@ -180,28 +180,28 @@ CONTAINS
         IF(lwp) WRITE(numout,*)
 
         IF(lwp) WRITE(numout,*) 'Boundary conditions for barotropic solution:  '
-        SELECT CASE( cn_dyn2d(ib_bdy) )                  
-          CASE( 'none' )         
-             IF(lwp) WRITE(numout,*) '      no open boundary condition'        
+        SELECT CASE( cn_dyn2d(ib_bdy) )
+          CASE( 'none' )
+             IF(lwp) WRITE(numout,*) '      no open boundary condition'
              dta_bdy(ib_bdy)%ll_ssh = .false.
              dta_bdy(ib_bdy)%ll_u2d = .false.
              dta_bdy(ib_bdy)%ll_v2d = .false.
-          CASE( 'frs' )          
+          CASE( 'frs' )
              IF(lwp) WRITE(numout,*) '      Flow Relaxation Scheme'
              dta_bdy(ib_bdy)%ll_ssh = .false.
              dta_bdy(ib_bdy)%ll_u2d = .true.
              dta_bdy(ib_bdy)%ll_v2d = .true.
-          CASE( 'flather' )      
+          CASE( 'flather' )
              IF(lwp) WRITE(numout,*) '      Flather radiation condition'
              dta_bdy(ib_bdy)%ll_ssh = .true.
              dta_bdy(ib_bdy)%ll_u2d = .true.
              dta_bdy(ib_bdy)%ll_v2d = .true.
-          CASE( 'orlanski' )     
+          CASE( 'orlanski' )
              IF(lwp) WRITE(numout,*) '      Orlanski (fully oblique) radiation condition with adaptive nudging'
              dta_bdy(ib_bdy)%ll_ssh = .false.
              dta_bdy(ib_bdy)%ll_u2d = .true.
              dta_bdy(ib_bdy)%ll_v2d = .true.
-          CASE( 'orlanski_npo' ) 
+          CASE( 'orlanski_npo' )
              IF(lwp) WRITE(numout,*) '      Orlanski (NPO) radiation condition with adaptive nudging'
              dta_bdy(ib_bdy)%ll_ssh = .false.
              dta_bdy(ib_bdy)%ll_u2d = .true.
@@ -209,8 +209,8 @@ CONTAINS
           CASE DEFAULT   ;   CALL ctl_stop( 'unrecognised value for cn_dyn2d' )
         END SELECT
         IF( cn_dyn2d(ib_bdy) /= 'none' ) THEN
-           SELECT CASE( nn_dyn2d_dta(ib_bdy) )                   ! 
-              CASE( 0 )      ;   IF(lwp) WRITE(numout,*) '      initial state used for bdy data'        
+           SELECT CASE( nn_dyn2d_dta(ib_bdy) )                   !
+              CASE( 0 )      ;   IF(lwp) WRITE(numout,*) '      initial state used for bdy data'
               CASE( 1 )      ;   IF(lwp) WRITE(numout,*) '      boundary data taken from file'
               CASE( 2 )      ;   IF(lwp) WRITE(numout,*) '      tidal harmonic forcing taken from file'
               CASE( 3 )      ;   IF(lwp) WRITE(numout,*) '      boundary data AND tidal harmonic forcing taken from files'
@@ -223,12 +223,12 @@ CONTAINS
         IF(lwp) WRITE(numout,*)
 
         IF(lwp) WRITE(numout,*) 'Boundary conditions for baroclinic velocities:  '
-        SELECT CASE( cn_dyn3d(ib_bdy) )                  
+        SELECT CASE( cn_dyn3d(ib_bdy) )
           CASE('none')
-             IF(lwp) WRITE(numout,*) '      no open boundary condition'        
+             IF(lwp) WRITE(numout,*) '      no open boundary condition'
              dta_bdy(ib_bdy)%ll_u3d = .false.
              dta_bdy(ib_bdy)%ll_v3d = .false.
-          CASE('frs')       
+          CASE('frs')
              IF(lwp) WRITE(numout,*) '      Flow Relaxation Scheme'
              dta_bdy(ib_bdy)%ll_u3d = .true.
              dta_bdy(ib_bdy)%ll_v3d = .true.
@@ -259,8 +259,8 @@ CONTAINS
           CASE DEFAULT   ;   CALL ctl_stop( 'unrecognised value for cn_dyn3d' )
         END SELECT
         IF( cn_dyn3d(ib_bdy) /= 'none' ) THEN
-           SELECT CASE( nn_dyn3d_dta(ib_bdy) )                   ! 
-              CASE( 0 )      ;   IF(lwp) WRITE(numout,*) '      initial state used for bdy data'        
+           SELECT CASE( nn_dyn3d_dta(ib_bdy) )                   !
+              CASE( 0 )      ;   IF(lwp) WRITE(numout,*) '      initial state used for bdy data'
               CASE( 1 )      ;   IF(lwp) WRITE(numout,*) '      boundary data taken from file'
               CASE DEFAULT   ;   CALL ctl_stop( 'nn_dyn3d_dta must be 0 or 1' )
            END SELECT
@@ -285,9 +285,9 @@ CONTAINS
         IF(lwp) WRITE(numout,*)
 
         IF(lwp) WRITE(numout,*) 'Boundary conditions for temperature and salinity:  '
-        SELECT CASE( cn_tra(ib_bdy) )                  
+        SELECT CASE( cn_tra(ib_bdy) )
           CASE('none')
-             IF(lwp) WRITE(numout,*) '      no open boundary condition'        
+             IF(lwp) WRITE(numout,*) '      no open boundary condition'
              dta_bdy(ib_bdy)%ll_tem = .false.
              dta_bdy(ib_bdy)%ll_sal = .false.
           CASE('frs')
@@ -317,8 +317,8 @@ CONTAINS
           CASE DEFAULT   ;   CALL ctl_stop( 'unrecognised value for cn_tra' )
         END SELECT
         IF( cn_tra(ib_bdy) /= 'none' ) THEN
-           SELECT CASE( nn_tra_dta(ib_bdy) )                   ! 
-              CASE( 0 )      ;   IF(lwp) WRITE(numout,*) '      initial state used for bdy data'        
+           SELECT CASE( nn_tra_dta(ib_bdy) )                   !
+              CASE( 0 )      ;   IF(lwp) WRITE(numout,*) '      initial state used for bdy data'
               CASE( 1 )      ;   IF(lwp) WRITE(numout,*) '      boundary data taken from file'
               CASE DEFAULT   ;   CALL ctl_stop( 'nn_tra_dta must be 0 or 1' )
            END SELECT
@@ -376,7 +376,7 @@ CONTAINS
 
       ! Work out global dimensions of boundary data
       ! ---------------------------------------------
-      REWIND( numnam_cfg )     
+      REWIND( numnam_cfg )
 
       nblendta(:,:) = 0
       nbdysege = 0
@@ -391,10 +391,10 @@ CONTAINS
       DO ib_bdy = 1, nb_bdy
 
          IF( .NOT. ln_coords_file(ib_bdy) ) THEN ! Work out size of global arrays from namelist parameters
- 
+
             icount = icount + 1
             ! No REWIND here because may need to read more than one nambdy_index namelist.
-            ! Read only namelist_cfg to avoid unseccessfull overwrite 
+            ! Read only namelist_cfg to avoid unseccessfull overwrite
             ! keep full control of the configuration namelist
             READ  ( numnam_cfg, nambdy_index, IOSTAT = ios, ERR = 904 )
 904         IF( ios /= 0 )   CALL ctl_nam ( ios , 'nambdy_index in configuration namelist', lwp )
@@ -431,7 +431,7 @@ CONTAINS
                     nbdybeg  = 2
                     nbdyend  = jpjglo - 1
                  ENDIF
-                 nbdysege = nbdysege + 1 
+                 nbdysege = nbdysege + 1
                  npckge(nbdysege) = ib_bdy ! Save bdy package number
                  jpieob(nbdysege) = nbdyind
                  jpjedt(nbdysege) = nbdybeg
@@ -465,13 +465,13 @@ CONTAINS
          ELSE            ! Read size of arrays in boundary coordinates file.
             CALL iom_open( cn_coords_file(ib_bdy), inum )
             DO igrd = 1, jpbgrd
-               id_dummy = iom_varid( inum, 'nbi'//cgrid(igrd), kdimsz=kdimsz )  
+               id_dummy = iom_varid( inum, 'nbi'//cgrid(igrd), kdimsz=kdimsz )
                nblendta(igrd,ib_bdy) = MAXVAL(kdimsz)
                jpbdtau = MAX(jpbdtau, MAXVAL(kdimsz))
             END DO
             CALL iom_close( inum )
             !
-         ENDIF 
+         ENDIF
          !
       END DO ! ib_bdy
 
@@ -501,10 +501,10 @@ CONTAINS
             ELSE
                ALLOCATE( dta_global2(jpbdtas, nrimmax, jpk) )
                ALLOCATE( dta_global2_z(jpbdtas, nrimmax, jpk) ) ! needed ?? TODO
-               ALLOCATE( dta_global2_dz(jpbdtas, nrimmax, jpk) )! needed ?? TODO  
+               ALLOCATE( dta_global2_dz(jpbdtas, nrimmax, jpk) )! needed ?? TODO
             ENDIF
          ENDIF
-         ! 
+         !
       ENDIF
 
       ! Now look for crossings in user (namelist) defined open boundary segments:
@@ -512,7 +512,7 @@ CONTAINS
       IF( icount>0 )   CALL bdy_ctl_seg
 
       ! Calculate global boundary index arrays or read in from file
-      !------------------------------------------------------------               
+      !------------------------------------------------------------
       ! 1. Read global index arrays from boundary coordinates file.
       DO ib_bdy = 1, nb_bdy
          !
@@ -542,10 +542,10 @@ CONTAINS
             END DO
             CALL iom_close( inum )
             !
-         ENDIF 
+         ENDIF
          !
-      END DO      
-    
+      END DO
+
       ! 2. Now fill indices corresponding to straight open boundary arrays:
       ! East
       !-----
@@ -649,7 +649,7 @@ CONTAINS
             DO ii = jpindt(iseg), jpinft(iseg)
                icount = icount + 1
                nbidta(icount, igrd, ib_bdy) = ii
-               nbjdta(icount, igrd, ib_bdy) = jpjnob(iseg) + 2 - ir 
+               nbjdta(icount, igrd, ib_bdy) = jpjnob(iseg) + 2 - ir
                nbrdta(icount, igrd, ib_bdy) = ir
             ENDDO
          ENDDO
@@ -740,8 +740,8 @@ CONTAINS
                      DO ib2 = 1, nblendta(igrd,ib_bdy2)
                         IF ((nbidta(ib1, igrd, ib_bdy1)==nbidta(ib2, igrd, ib_bdy2)).AND. &
                         &   (nbjdta(ib1, igrd, ib_bdy1)==nbjdta(ib2, igrd, ib_bdy2))) THEN
-!                           IF ((lwp).AND.(igrd==1)) WRITE(numout,*) ' found coincident point ji, jj:', & 
-!                                                       &              nbidta(ib1, igrd, ib_bdy1),      & 
+!                           IF ((lwp).AND.(igrd==1)) WRITE(numout,*) ' found coincident point ji, jj:', &
+!                                                       &              nbidta(ib1, igrd, ib_bdy1),      &
 !                                                       &              nbjdta(ib2, igrd, ib_bdy2)
                            ! keep only points with the lowest distance to boundary:
                            IF (nbrdta(ib1, igrd, ib_bdy1)<nbrdta(ib2, igrd, ib_bdy2)) THEN
@@ -771,7 +771,7 @@ CONTAINS
 !      iw = mig(1) + 1            ! if monotasking and no zoom, iw=2
 !      ie = mig(1) + nlci-1 - 1   ! if monotasking and no zoom, ie=jpim1
 !      is = mjg(1) + 1            ! if monotasking and no zoom, is=2
-!      in = mjg(1) + nlcj-1 - 1   ! if monotasking and no zoom, in=jpjm1      
+!      in = mjg(1) + nlcj-1 - 1   ! if monotasking and no zoom, in=jpjm1
       iwe = mig(1) - 1 + 2         ! if monotasking and no zoom, iw=2
       ies = mig(1) + nlci-1 - 1  ! if monotasking and no zoom, ie=jpim1
       iso = mjg(1) - 1 + 2         ! if monotasking and no zoom, is=2
@@ -845,7 +845,7 @@ CONTAINS
                      CALL ctl_stop('bdy_segs : ERROR : boundary data in file must be defined ', &
                           &        ' in order of distance from edge nbr A utility for re-ordering ', &
                           &        ' boundary coordinates and data files exists in the TOOLS/OBC directory')
-                  ENDIF    
+                  ENDIF
                ENDIF
                ! check if point is in local domain
                IF(  nbidta(ib,igrd,ib_bdy) >= iwe .AND. nbidta(ib,igrd,ib_bdy) <= ies .AND.   &
@@ -857,7 +857,7 @@ CONTAINS
                ENDIF
             END DO
             idx_bdy(ib_bdy)%nblenrim(igrd) = icountr !: length of rim boundary data on each proc
-            idx_bdy(ib_bdy)%nblen   (igrd) = icount  !: length of boundary data on each proc        
+            idx_bdy(ib_bdy)%nblen   (igrd) = icount  !: length of boundary data on each proc
          END DO  ! igrd
 
          ! Allocate index arrays for this boundary set
@@ -911,12 +911,12 @@ CONTAINS
                         com_east = 1
                      elseif((com_west .ne. 1) .and. (ii == 2) .and. (nbondi .ge. 0) .and. (nbondi .ne. 2)) then
                         com_west = 1
-                     endif 
+                     endif
                      if((com_south .ne. 1) .and. (ij == 2) .and. (nbondj .ge. 0) .and. (nbondj .ne. 2)) then
                         com_south = 1
                      elseif((com_north .ne. 1) .and. (ij == (nlcj-1)) .and. (nbondj .le. 0)) then
                         com_north = 1
-                     endif 
+                     endif
                      idx_bdy(ib_bdy)%nbr(icount,igrd)   = nbrdta(ib,igrd,ib_bdy)
                      idx_bdy(ib_bdy)%nbmap(icount,igrd) = ib
                   ENDIF
@@ -934,7 +934,7 @@ CONTAINS
                             com_north = 1
                           endif
                           com_west_b = 1
-                       endif 
+                       endif
                      ENDIF
                      IF( nbidta(ib,igrd,ib_bdy) >= iw_b(2) .AND. nbidta(ib,igrd,ib_bdy) <= ie_b(2) .AND.   &
                        & nbjdta(ib,igrd,ib_bdy) >= is_b(2) .AND. nbjdta(ib,igrd,ib_bdy) <= in_b(2) .AND.   &
@@ -948,7 +948,7 @@ CONTAINS
                             com_north = 1
                           endif
                           com_east_b = 1
-                       endif 
+                       endif
                      ENDIF
                   ELSEIF(nbondi == 1) THEN
                      IF( nbidta(ib,igrd,ib_bdy) >= iw_b(1) .AND. nbidta(ib,igrd,ib_bdy) <= ie_b(1) .AND.   &
@@ -963,7 +963,7 @@ CONTAINS
                             com_north = 1
                           endif
                           com_west_b = 1
-                       endif 
+                       endif
                      ENDIF
                   ELSEIF(nbondi == -1) THEN
                      IF( nbidta(ib,igrd,ib_bdy) >= iw_b(2) .AND. nbidta(ib,igrd,ib_bdy) <= ie_b(2) .AND.   &
@@ -978,19 +978,19 @@ CONTAINS
                             com_north = 1
                           endif
                           com_east_b = 1
-                       endif 
+                       endif
                      ENDIF
                   ENDIF
                   IF(nbondj == 0) THEN
                      IF(com_north_b .ne. 1 .AND. (nbidta(ib,igrd,ib_bdy) == iw_b(4)-1  &
                        & .OR. nbidta(ib,igrd,ib_bdy) == ie_b(4)+1) .AND. &
                        & nbjdta(ib,igrd,ib_bdy) == is_b(4) .AND. nbrdta(ib,igrd,ib_bdy) == ir) THEN
-                       com_north_b = 1 
+                       com_north_b = 1
                      ENDIF
                      IF(com_south_b .ne. 1 .AND. (nbidta(ib,igrd,ib_bdy) == iw_b(3)-1  &
                        &.OR. nbidta(ib,igrd,ib_bdy) == ie_b(3)+1) .AND. &
                        & nbjdta(ib,igrd,ib_bdy) == in_b(3) .AND. nbrdta(ib,igrd,ib_bdy) == ir) THEN
-                       com_south_b = 1 
+                       com_south_b = 1
                      ENDIF
                      IF( nbidta(ib,igrd,ib_bdy) >= iw_b(3) .AND. nbidta(ib,igrd,ib_bdy) <= ie_b(3) .AND.   &
                        & nbjdta(ib,igrd,ib_bdy) >= is_b(3) .AND. nbjdta(ib,igrd,ib_bdy) <= in_b(3) .AND.   &
@@ -998,7 +998,7 @@ CONTAINS
                        ij = nbjdta(ib,igrd,ib_bdy)- is_b(3)+2
                        if((com_south_b .ne. 1) .and. (ij == (nlcjt(noso+1)-1))) then
                           com_south_b = 1
-                       endif 
+                       endif
                      ENDIF
                      IF( nbidta(ib,igrd,ib_bdy) >= iw_b(4) .AND. nbidta(ib,igrd,ib_bdy) <= ie_b(4) .AND.   &
                        & nbjdta(ib,igrd,ib_bdy) >= is_b(4) .AND. nbjdta(ib,igrd,ib_bdy) <= in_b(4) .AND.   &
@@ -1006,13 +1006,13 @@ CONTAINS
                        ij = nbjdta(ib,igrd,ib_bdy)- is_b(4)+2
                        if((com_north_b .ne. 1) .and. (ij == 2)) then
                           com_north_b = 1
-                       endif 
+                       endif
                      ENDIF
                   ELSEIF(nbondj == 1) THEN
                      IF( com_south_b .ne. 1 .AND. (nbidta(ib,igrd,ib_bdy) == iw_b(3)-1 .OR. &
                        & nbidta(ib,igrd,ib_bdy) == ie_b(3)+1) .AND. &
                        & nbjdta(ib,igrd,ib_bdy) == in_b(3) .AND. nbrdta(ib,igrd,ib_bdy) == ir) THEN
-                       com_south_b = 1 
+                       com_south_b = 1
                      ENDIF
                      IF( nbidta(ib,igrd,ib_bdy) >= iw_b(3) .AND. nbidta(ib,igrd,ib_bdy) <= ie_b(3) .AND.   &
                        & nbjdta(ib,igrd,ib_bdy) >= is_b(3) .AND. nbjdta(ib,igrd,ib_bdy) <= in_b(3) .AND.   &
@@ -1020,13 +1020,13 @@ CONTAINS
                        ij = nbjdta(ib,igrd,ib_bdy)- is_b(3)+2
                        if((com_south_b .ne. 1) .and. (ij == (nlcjt(noso+1)-1))) then
                           com_south_b = 1
-                       endif 
+                       endif
                      ENDIF
                   ELSEIF(nbondj == -1) THEN
                      IF(com_north_b .ne. 1 .AND. (nbidta(ib,igrd,ib_bdy) == iw_b(4)-1  &
                        & .OR. nbidta(ib,igrd,ib_bdy) == ie_b(4)+1) .AND. &
                        & nbjdta(ib,igrd,ib_bdy) == is_b(4) .AND. nbrdta(ib,igrd,ib_bdy) == ir) THEN
-                       com_north_b = 1 
+                       com_north_b = 1
                      ENDIF
                      IF( nbidta(ib,igrd,ib_bdy) >= iw_b(4) .AND. nbidta(ib,igrd,ib_bdy) <= ie_b(4) .AND.   &
                        & nbjdta(ib,igrd,ib_bdy) >= is_b(4) .AND. nbjdta(ib,igrd,ib_bdy) <= in_b(4) .AND.   &
@@ -1034,12 +1034,12 @@ CONTAINS
                        ij = nbjdta(ib,igrd,ib_bdy)- is_b(4)+2
                        if((com_north_b .ne. 1) .and. (ij == 2)) then
                           com_north_b = 1
-                       endif 
+                       endif
                      ENDIF
                   ENDIF
                ENDDO
             ENDDO
-         ENDDO 
+         ENDDO
 
          ! definition of the i- and j- direction local boundaries arrays used for sending the boundaries
          IF(     (com_east  == 1) .and. (com_west  == 1) ) THEN   ;   nbondi_bdy(ib_bdy) =  0
@@ -1070,19 +1070,19 @@ CONTAINS
 !               idx_bdy(ib_bdy)%nbw(ib,igrd) = (REAL(nn_rimwidth(ib_bdy)+1-nbr)/REAL(nn_rimwidth(ib_bdy)))**2.  ! quadratic
 !               idx_bdy(ib_bdy)%nbw(ib,igrd) =  REAL(nn_rimwidth(ib_bdy)+1-nbr)/REAL(nn_rimwidth(ib_bdy))       ! linear
             END DO
-         END DO 
+         END DO
 
          ! Compute damping coefficients
          ! ----------------------------
          DO igrd = 1, jpbgrd
             DO ib = 1, idx_bdy(ib_bdy)%nblen(igrd)
                nbr => idx_bdy(ib_bdy)%nbr(ib,igrd)
-               idx_bdy(ib_bdy)%nbd(ib,igrd) = 1. / ( rn_time_dmp(ib_bdy) * rday ) & 
+               idx_bdy(ib_bdy)%nbd(ib,igrd) = 1. / ( rn_time_dmp(ib_bdy) * rday ) &
                & *(REAL(nn_rimwidth(ib_bdy)+1-nbr)/REAL(nn_rimwidth(ib_bdy)))**2.   ! quadratic
-               idx_bdy(ib_bdy)%nbdout(ib,igrd) = 1. / ( rn_time_dmp_out(ib_bdy) * rday ) & 
+               idx_bdy(ib_bdy)%nbdout(ib,igrd) = 1. / ( rn_time_dmp_out(ib_bdy) * rday ) &
                & *(REAL(nn_rimwidth(ib_bdy)+1-nbr)/REAL(nn_rimwidth(ib_bdy)))**2.   ! quadratic
             END DO
-         END DO 
+         END DO
 
       END DO
 
@@ -1093,8 +1093,8 @@ CONTAINS
       ! Read global 2D mask at T-points: bdytmask
       ! -----------------------------------------
       ! bdytmask = 1  on the computational domain AND on open boundaries
-      !          = 0  elsewhere   
- 
+      !          = 0  elsewhere
+
       bdytmask(:,:) = ssmask(:,:)
 
       ! Derive mask on U and V grid from mask on T grid
@@ -1104,16 +1104,16 @@ CONTAINS
       DO ij = 1, jpjm1
          DO ii = 1, jpim1
             bdyumask(ii,ij) = bdytmask(ii,ij) * bdytmask(ii+1, ij )
-            bdyvmask(ii,ij) = bdytmask(ii,ij) * bdytmask(ii  ,ij+1)  
+            bdyvmask(ii,ij) = bdytmask(ii,ij) * bdytmask(ii  ,ij+1)
          END DO
       END DO
-      CALL lbc_lnk_multi( bdyumask, 'U', 1. , bdyvmask, 'V', 1. )   ! Lateral boundary cond. 
+      CALL lbc_lnk_multi( bdyumask, 'U', 1. , bdyvmask, 'V', 1. )   ! Lateral boundary cond.
 
       ! bdy masks are now set to zero on boundary points:
       !
       igrd = 1
       DO ib_bdy = 1, nb_bdy
-        DO ib = 1, idx_bdy(ib_bdy)%nblenrim(igrd)      
+        DO ib = 1, idx_bdy(ib_bdy)%nblenrim(igrd)
           bdytmask(idx_bdy(ib_bdy)%nbi(ib,igrd), idx_bdy(ib_bdy)%nbj(ib,igrd)) = 0._wp
         END DO
       END DO
@@ -1139,31 +1139,31 @@ CONTAINS
          DO ii = 2, jpim1
             zfmask(ii,ij) = tmask(ii,ij  ,1) * tmask(ii+1,ij  ,1)   &
            &              * tmask(ii,ij+1,1) * tmask(ii+1,ij+1,1)
-         END DO      
+         END DO
       END DO
 
       ! Lateral boundary conditions
-      CALL lbc_lnk( zfmask, 'F', 1. ) 
+      CALL lbc_lnk( zfmask, 'F', 1. )
       CALL lbc_lnk_multi( bdyumask, 'U', 1. , bdyvmask, 'V', 1., bdytmask, 'T', 1. )
       DO ib_bdy = 1, nb_bdy       ! Indices and directions of rim velocity components
 
          idx_bdy(ib_bdy)%flagu(:,:) = 0._wp
          idx_bdy(ib_bdy)%flagv(:,:) = 0._wp
-         icount = 0 
+         icount = 0
 
          ! Calculate relationship of U direction to the local orientation of the boundary
          ! flagu = -1 : u component is normal to the dynamical boundary and its direction is outward
          ! flagu =  0 : u is tangential
          ! flagu =  1 : u is normal to the boundary and is direction is inward
-  
-         DO igrd = 1, jpbgrd 
+
+         DO igrd = 1, jpbgrd
             SELECT CASE( igrd )
                CASE( 1 )   ;   pmask => umask   (:,:,1)   ;   i_offset = 0
                CASE( 2 )   ;   pmask => bdytmask(:,:)     ;   i_offset = 1
                CASE( 3 )   ;   pmask => zfmask  (:,:)     ;   i_offset = 0
-            END SELECT 
+            END SELECT
             icount = 0
-            DO ib = 1, idx_bdy(ib_bdy)%nblenrim(igrd)  
+            DO ib = 1, idx_bdy(ib_bdy)%nblenrim(igrd)
                nbi => idx_bdy(ib_bdy)%nbi(ib,igrd)
                nbj => idx_bdy(ib_bdy)%nbj(ib,igrd)
                zefl = pmask(nbi+i_offset-1,nbj)
@@ -1183,7 +1183,7 @@ CONTAINS
                IF(lwp) WRITE(numout,*) ' ========== '
                IF(lwp) WRITE(numout,*)
                nstop = nstop + 1
-            ENDIF 
+            ENDIF
          END DO
 
          ! Calculate relationship of V direction to the local orientation of the boundary
@@ -1191,14 +1191,14 @@ CONTAINS
          ! flagv =  0 : v is tangential
          ! flagv =  1 : v is normal to the boundary and is direction is inward
 
-         DO igrd = 1, jpbgrd 
+         DO igrd = 1, jpbgrd
             SELECT CASE( igrd )
                CASE( 1 )   ;   pmask => vmask (:,:,1)   ;   j_offset = 0
                CASE( 2 )   ;   pmask => zfmask(:,:)     ;   j_offset = 0
                CASE( 3 )   ;   pmask => bdytmask        ;   j_offset = 1
-            END SELECT 
+            END SELECT
             icount = 0
-            DO ib = 1, idx_bdy(ib_bdy)%nblenrim(igrd)  
+            DO ib = 1, idx_bdy(ib_bdy)%nblenrim(igrd)
                nbi => idx_bdy(ib_bdy)%nbi(ib,igrd)
                nbj => idx_bdy(ib_bdy)%nbj(ib,igrd)
                znfl = pmask(nbi,nbj+j_offset-1)
@@ -1218,7 +1218,7 @@ CONTAINS
                IF(lwp) WRITE(numout,*) ' ========== '
                IF(lwp) WRITE(numout,*)
                nstop = nstop + 1
-            ENDIF 
+            ENDIF
          END DO
          !
       END DO
@@ -1226,8 +1226,8 @@ CONTAINS
       ! Compute total lateral surface for volume correction:
       ! ----------------------------------------------------
       ! JC: this must be done at each time step with non-linear free surface
-      bdysurftot = 0._wp 
-      IF( ln_vol ) THEN  
+      bdysurftot = 0._wp
+      IF( ln_vol ) THEN
          igrd = 2      ! Lateral surface at U-points
          DO ib_bdy = 1, nb_bdy
             DO ib = 1, idx_bdy(ib_bdy)%nblenrim(igrd)
@@ -1237,7 +1237,7 @@ CONTAINS
                bdysurftot = bdysurftot + hu_n   (nbi  , nbj)                           &
                   &                    * e2u    (nbi  , nbj) * ABS( flagu ) &
                   &                    * tmask_i(nbi  , nbj)                           &
-                  &                    * tmask_i(nbi+1, nbj)                   
+                  &                    * tmask_i(nbi+1, nbj)
             END DO
          END DO
 
@@ -1255,7 +1255,7 @@ CONTAINS
          END DO
          !
          IF( lk_mpp )   CALL mpp_sum( bdysurftot )      ! sum over the global domain
-      END IF   
+      END IF
       !
       ! Tidy up
       !--------
@@ -1271,10 +1271,10 @@ CONTAINS
       !! ** Purpose :   Check straight open boundary segments location
       !!
       !! ** Method  :   - Look for open boundary corners
-      !!                - Check that segments start or end on land 
+      !!                - Check that segments start or end on land
       !!----------------------------------------------------------------------
-      INTEGER  ::   ib, ib1, ib2, ji ,jj, itest  
-      INTEGER, DIMENSION(jp_nseg,2) :: icorne, icornw, icornn, icorns  
+      INTEGER  ::   ib, ib1, ib2, ji ,jj, itest
+      INTEGER, DIMENSION(jp_nseg,2) :: icorne, icornw, icornn, icorns
       REAL(wp), DIMENSION(2) ::   ztestmask
       !!----------------------------------------------------------------------
       !
@@ -1290,7 +1290,7 @@ CONTAINS
       !----------------
       DO ib = 1, nbdysegn
          IF (lwp) WRITE(numout,*) '**check north seg bounds pckg: ', npckgn(ib)
-         IF ((jpjnob(ib).ge.jpjglo-1).or.& 
+         IF ((jpjnob(ib).ge.jpjglo-1).or.&
             &(jpjnob(ib).le.1))        CALL ctl_stop( 'nbdyind out of domain' )
          IF (jpindt(ib).ge.jpinft(ib)) CALL ctl_stop( 'Bdy start index is greater than end index' )
          IF (jpindt(ib).le.1     )     CALL ctl_stop( 'Start index out of domain' )
@@ -1299,7 +1299,7 @@ CONTAINS
       !
       DO ib = 1, nbdysegs
          IF (lwp) WRITE(numout,*) '**check south seg bounds pckg: ', npckgs(ib)
-         IF ((jpjsob(ib).ge.jpjglo-1).or.& 
+         IF ((jpjsob(ib).ge.jpjglo-1).or.&
             &(jpjsob(ib).le.1))        CALL ctl_stop( 'nbdyind out of domain' )
          IF (jpisdt(ib).ge.jpisft(ib)) CALL ctl_stop( 'Bdy start index is greater than end index' )
          IF (jpisdt(ib).le.1     )     CALL ctl_stop( 'Start index out of domain' )
@@ -1308,7 +1308,7 @@ CONTAINS
       !
       DO ib = 1, nbdysege
          IF (lwp) WRITE(numout,*) '**check east  seg bounds pckg: ', npckge(ib)
-         IF ((jpieob(ib).ge.jpiglo-1).or.& 
+         IF ((jpieob(ib).ge.jpiglo-1).or.&
             &(jpieob(ib).le.1))        CALL ctl_stop( 'nbdyind out of domain' )
          IF (jpjedt(ib).ge.jpjeft(ib)) CALL ctl_stop( 'Bdy start index is greater than end index' )
          IF (jpjedt(ib).le.1     )     CALL ctl_stop( 'Start index out of domain' )
@@ -1317,16 +1317,16 @@ CONTAINS
       !
       DO ib = 1, nbdysegw
          IF (lwp) WRITE(numout,*) '**check west  seg bounds pckg: ', npckgw(ib)
-         IF ((jpiwob(ib).ge.jpiglo-1).or.& 
+         IF ((jpiwob(ib).ge.jpiglo-1).or.&
             &(jpiwob(ib).le.1))        CALL ctl_stop( 'nbdyind out of domain' )
          IF (jpjwdt(ib).ge.jpjwft(ib)) CALL ctl_stop( 'Bdy start index is greater than end index' )
          IF (jpjwdt(ib).le.1     )     CALL ctl_stop( 'Start index out of domain' )
          IF (jpjwft(ib).ge.jpjglo)     CALL ctl_stop( 'End index out of domain' )
       ENDDO
       !
-      !      
+      !
       ! 2. Look for segment crossings
-      !------------------------------ 
+      !------------------------------
       IF (lwp) WRITE(numout,*) '**Look for segments corners  :'
       !
       itest = 0 ! corner number
@@ -1337,15 +1337,15 @@ CONTAINS
       icorne(:,:)=0. ; icornw(:,:)=0. ; icornn(:,:)=0. ; icorns(:,:)=0.
       ! South/West crossings
       IF ((nbdysegw > 0).AND.(nbdysegs > 0)) THEN
-         DO ib1 = 1, nbdysegw        
+         DO ib1 = 1, nbdysegw
             DO ib2 = 1, nbdysegs
                IF (( jpisdt(ib2)<=jpiwob(ib1)).AND. &
                 &  ( jpisft(ib2)>=jpiwob(ib1)).AND. &
                 &  ( jpjwdt(ib1)<=jpjsob(ib2)).AND. &
                 &  ( jpjwft(ib1)>=jpjsob(ib2))) THEN
-                  IF ((jpjwdt(ib1)==jpjsob(ib2)).AND.(jpisdt(ib2)==jpiwob(ib1))) THEN 
-                     ! We have a possible South-West corner                      
-!                     WRITE(numout,*) ' Found a South-West corner at (i,j): ', jpisdt(ib2), jpjwdt(ib1) 
+                  IF ((jpjwdt(ib1)==jpjsob(ib2)).AND.(jpisdt(ib2)==jpiwob(ib1))) THEN
+                     ! We have a possible South-West corner
+!                     WRITE(numout,*) ' Found a South-West corner at (i,j): ', jpisdt(ib2), jpjwdt(ib1)
 !                     WRITE(numout,*) ' between segments: ', npckgw(ib1), npckgs(ib2)
                      icornw(ib1,1) = npckgs(ib2)
                      icorns(ib2,1) = npckgw(ib1)
@@ -1354,7 +1354,7 @@ CONTAINS
                      IF(lwp) WRITE(numout,*) ' E R R O R : Found an acute open boundary corner at point (i,j)= ', &
                      &                                     jpisft(ib2), jpjwft(ib1)
                      IF(lwp) WRITE(numout,*) ' ==========  Not allowed yet'
-                     IF(lwp) WRITE(numout,*) '             Crossing problem with West segment: ',npckgw(ib1), & 
+                     IF(lwp) WRITE(numout,*) '             Crossing problem with West segment: ',npckgw(ib1), &
                      &                                                    ' and South segment: ',npckgs(ib2)
                      IF(lwp) WRITE(numout,*)
                      nstop = nstop + 1
@@ -1380,8 +1380,8 @@ CONTAINS
                 &  ( jpjedt(ib1)<=jpjsob(ib2)  ).AND. &
                 &  ( jpjeft(ib1)>=jpjsob(ib2)  )) THEN
                   IF ((jpjedt(ib1)==jpjsob(ib2)).AND.(jpisft(ib2)==jpieob(ib1)+1)) THEN
-                     ! We have a possible South-East corner 
-!                     WRITE(numout,*) ' Found a South-East corner at (i,j): ', jpisft(ib2), jpjedt(ib1) 
+                     ! We have a possible South-East corner
+!                     WRITE(numout,*) ' Found a South-East corner at (i,j): ', jpisft(ib2), jpjedt(ib1)
 !                     WRITE(numout,*) ' between segments: ', npckge(ib1), npckgs(ib2)
                      icorne(ib1,1) = npckgs(ib2)
                      icorns(ib2,2) = npckge(ib1)
@@ -1409,15 +1409,15 @@ CONTAINS
       !
       ! North/West crossings
       IF ((nbdysegn > 0).AND.(nbdysegw > 0)) THEN
-         DO ib1 = 1, nbdysegw        
+         DO ib1 = 1, nbdysegw
             DO ib2 = 1, nbdysegn
                IF (( jpindt(ib2)<=jpiwob(ib1)  ).AND. &
                 &  ( jpinft(ib2)>=jpiwob(ib1)  ).AND. &
                 &  ( jpjwdt(ib1)<=jpjnob(ib2)+1).AND. &
                 &  ( jpjwft(ib1)>=jpjnob(ib2)+1)) THEN
                   IF ((jpjwft(ib1)==jpjnob(ib2)+1).AND.(jpindt(ib2)==jpiwob(ib1))) THEN
-                     ! We have a possible North-West corner 
-!                     WRITE(numout,*) ' Found a North-West corner at (i,j): ', jpindt(ib2), jpjwft(ib1) 
+                     ! We have a possible North-West corner
+!                     WRITE(numout,*) ' Found a North-West corner at (i,j): ', jpindt(ib2), jpjwft(ib1)
 !                     WRITE(numout,*) ' between segments: ', npckgw(ib1), npckgn(ib2)
                      icornw(ib1,2) = npckgn(ib2)
                      icornn(ib2,1) = npckgw(ib1)
@@ -1445,14 +1445,14 @@ CONTAINS
       !
       ! North/East crossings
       IF ((nbdysegn > 0).AND.(nbdysege > 0)) THEN
-         DO ib1 = 1, nbdysege        
+         DO ib1 = 1, nbdysege
             DO ib2 = 1, nbdysegn
                IF (( jpindt(ib2)<=jpieob(ib1)+1).AND. &
                 &  ( jpinft(ib2)>=jpieob(ib1)+1).AND. &
                 &  ( jpjedt(ib1)<=jpjnob(ib2)+1).AND. &
                 &  ( jpjeft(ib1)>=jpjnob(ib2)+1)) THEN
                   IF ((jpjeft(ib1)==jpjnob(ib2)+1).AND.(jpinft(ib2)==jpieob(ib1)+1)) THEN
-                     ! We have a possible North-East corner 
+                     ! We have a possible North-East corner
 !                     WRITE(numout,*) ' Found a North-East corner at (i,j): ', jpinft(ib2), jpjeft(ib1)
 !                     WRITE(numout,*) ' between segments: ', npckge(ib1), npckgn(ib2)
                      icorne(ib1,2) = npckgn(ib2)
@@ -1480,27 +1480,27 @@ CONTAINS
       END IF
       !
       ! 3. Check if segment extremities are on land
-      !-------------------------------------------- 
+      !--------------------------------------------
       !
       ! West segments
       DO ib = 1, nbdysegw
          ! get mask at boundary extremities:
          ztestmask(1:2)=0.
          DO ji = 1, jpi
-            DO jj = 1, jpj             
-              IF (((ji + nimpp - 1) == jpiwob(ib)).AND. & 
+            DO jj = 1, jpj
+              IF (((ji + nimpp - 1) == jpiwob(ib)).AND. &
                &  ((jj + njmpp - 1) == jpjwdt(ib))) ztestmask(1)=tmask(ji,jj,1)
-              IF (((ji + nimpp - 1) == jpiwob(ib)).AND. & 
-               &  ((jj + njmpp - 1) == jpjwft(ib))) ztestmask(2)=tmask(ji,jj,1)  
+              IF (((ji + nimpp - 1) == jpiwob(ib)).AND. &
+               &  ((jj + njmpp - 1) == jpjwft(ib))) ztestmask(2)=tmask(ji,jj,1)
             END DO
          END DO
          IF( lk_mpp )   CALL mpp_sum( ztestmask, 2 )   ! sum over the global domain
 
-         IF (ztestmask(1)==1) THEN 
+         IF (ztestmask(1)==1) THEN
             IF (icornw(ib,1)==0) THEN
                IF(lwp) WRITE(numout,*)
                IF(lwp) WRITE(numout,*) ' E R R O R : Open boundary segment ', npckgw(ib)
-               IF(lwp) WRITE(numout,*) ' ==========  does not start on land or on a corner'                                                  
+               IF(lwp) WRITE(numout,*) ' ==========  does not start on land or on a corner'
                IF(lwp) WRITE(numout,*)
                nstop = nstop + 1
             ELSE
@@ -1514,7 +1514,7 @@ CONTAINS
             IF (icornw(ib,2)==0) THEN
                IF(lwp) WRITE(numout,*)
                IF(lwp) WRITE(numout,*) ' E R R O R : Open boundary segment ', npckgw(ib)
-               IF(lwp) WRITE(numout,*) ' ==========  does not end on land or on a corner'                                                  
+               IF(lwp) WRITE(numout,*) ' ==========  does not end on land or on a corner'
                IF(lwp) WRITE(numout,*)
                nstop = nstop + 1
             ELSE
@@ -1531,11 +1531,11 @@ CONTAINS
          ! get mask at boundary extremities:
          ztestmask(1:2)=0.
          DO ji = 1, jpi
-            DO jj = 1, jpj             
-              IF (((ji + nimpp - 1) == jpieob(ib)+1).AND. & 
+            DO jj = 1, jpj
+              IF (((ji + nimpp - 1) == jpieob(ib)+1).AND. &
                &  ((jj + njmpp - 1) == jpjedt(ib))) ztestmask(1)=tmask(ji,jj,1)
-              IF (((ji + nimpp - 1) == jpieob(ib)+1).AND. & 
-               &  ((jj + njmpp - 1) == jpjeft(ib))) ztestmask(2)=tmask(ji,jj,1)  
+              IF (((ji + nimpp - 1) == jpieob(ib)+1).AND. &
+               &  ((jj + njmpp - 1) == jpjeft(ib))) ztestmask(2)=tmask(ji,jj,1)
             END DO
          END DO
          IF( lk_mpp )   CALL mpp_sum( ztestmask, 2 )   ! sum over the global domain
@@ -1544,9 +1544,9 @@ CONTAINS
             IF (icorne(ib,1)==0) THEN
                IF(lwp) WRITE(numout,*)
                IF(lwp) WRITE(numout,*) ' E R R O R : Open boundary segment ', npckge(ib)
-               IF(lwp) WRITE(numout,*) ' ==========  does not start on land or on a corner'                                                  
+               IF(lwp) WRITE(numout,*) ' ==========  does not start on land or on a corner'
                IF(lwp) WRITE(numout,*)
-               nstop = nstop + 1 
+               nstop = nstop + 1
             ELSE
                ! This is a corner
                IF(lwp) WRITE(numout,*) 'Found a South-East corner at (i,j): ', jpieob(ib)+1, jpjedt(ib)
@@ -1558,7 +1558,7 @@ CONTAINS
             IF (icorne(ib,2)==0) THEN
                IF(lwp) WRITE(numout,*)
                IF(lwp) WRITE(numout,*) ' E R R O R : Open boundary segment ', npckge(ib)
-               IF(lwp) WRITE(numout,*) ' ==========  does not end on land or on a corner'                                                  
+               IF(lwp) WRITE(numout,*) ' ==========  does not end on land or on a corner'
                IF(lwp) WRITE(numout,*)
                nstop = nstop + 1
             ELSE
@@ -1575,11 +1575,11 @@ CONTAINS
          ! get mask at boundary extremities:
          ztestmask(1:2)=0.
          DO ji = 1, jpi
-            DO jj = 1, jpj             
-              IF (((jj + njmpp - 1) == jpjsob(ib)).AND. & 
+            DO jj = 1, jpj
+              IF (((jj + njmpp - 1) == jpjsob(ib)).AND. &
                &  ((ji + nimpp - 1) == jpisdt(ib))) ztestmask(1)=tmask(ji,jj,1)
-              IF (((jj + njmpp - 1) == jpjsob(ib)).AND. & 
-               &  ((ji + nimpp - 1) == jpisft(ib))) ztestmask(2)=tmask(ji,jj,1)  
+              IF (((jj + njmpp - 1) == jpjsob(ib)).AND. &
+               &  ((ji + nimpp - 1) == jpisft(ib))) ztestmask(2)=tmask(ji,jj,1)
             END DO
          END DO
          IF( lk_mpp )   CALL mpp_sum( ztestmask, 2 )   ! sum over the global domain
@@ -1587,14 +1587,14 @@ CONTAINS
          IF ((ztestmask(1)==1).AND.(icorns(ib,1)==0)) THEN
             IF(lwp) WRITE(numout,*)
             IF(lwp) WRITE(numout,*) ' E R R O R : Open boundary segment ', npckgs(ib)
-            IF(lwp) WRITE(numout,*) ' ==========  does not start on land or on a corner'                                                  
+            IF(lwp) WRITE(numout,*) ' ==========  does not start on land or on a corner'
             IF(lwp) WRITE(numout,*)
             nstop = nstop + 1
          ENDIF
          IF ((ztestmask(2)==1).AND.(icorns(ib,2)==0)) THEN
             IF(lwp) WRITE(numout,*)
             IF(lwp) WRITE(numout,*) ' E R R O R : Open boundary segment ', npckgs(ib)
-            IF(lwp) WRITE(numout,*) ' ==========  does not end on land or on a corner'                                                  
+            IF(lwp) WRITE(numout,*) ' ==========  does not end on land or on a corner'
             IF(lwp) WRITE(numout,*)
             nstop = nstop + 1
          ENDIF
@@ -1605,11 +1605,11 @@ CONTAINS
          ! get mask at boundary extremities:
          ztestmask(1:2)=0.
          DO ji = 1, jpi
-            DO jj = 1, jpj             
-              IF (((jj + njmpp - 1) == jpjnob(ib)+1).AND. & 
+            DO jj = 1, jpj
+              IF (((jj + njmpp - 1) == jpjnob(ib)+1).AND. &
                &  ((ji + nimpp - 1) == jpindt(ib))) ztestmask(1)=tmask(ji,jj,1)
-              IF (((jj + njmpp - 1) == jpjnob(ib)+1).AND. & 
-               &  ((ji + nimpp - 1) == jpinft(ib))) ztestmask(2)=tmask(ji,jj,1)  
+              IF (((jj + njmpp - 1) == jpjnob(ib)+1).AND. &
+               &  ((ji + nimpp - 1) == jpinft(ib))) ztestmask(2)=tmask(ji,jj,1)
             END DO
          END DO
          IF( lk_mpp )   CALL mpp_sum( ztestmask, 2 )   ! sum over the global domain
@@ -1617,14 +1617,14 @@ CONTAINS
          IF ((ztestmask(1)==1).AND.(icornn(ib,1)==0)) THEN
             IF(lwp) WRITE(numout,*)
             IF(lwp) WRITE(numout,*) ' E R R O R : Open boundary segment ', npckgn(ib)
-            IF(lwp) WRITE(numout,*) ' ==========  does not start on land'                                                  
+            IF(lwp) WRITE(numout,*) ' ==========  does not start on land'
             IF(lwp) WRITE(numout,*)
             nstop = nstop + 1
          ENDIF
          IF ((ztestmask(2)==1).AND.(icornn(ib,2)==0)) THEN
             IF(lwp) WRITE(numout,*)
             IF(lwp) WRITE(numout,*) ' E R R O R : Open boundary segment ', npckgn(ib)
-            IF(lwp) WRITE(numout,*) ' ==========  does not end on land'                                                  
+            IF(lwp) WRITE(numout,*) ' ==========  does not end on land'
             IF(lwp) WRITE(numout,*)
             nstop = nstop + 1
          ENDIF
@@ -1632,7 +1632,7 @@ CONTAINS
       !
       IF ((itest==0).AND.(lwp)) WRITE(numout,*) 'NO open boundary corner found'
       !
-      ! Other tests TBD: 
+      ! Other tests TBD:
       ! segments completly on land
       ! optimized open boundary array length according to landmask
       ! Nudging layers that overlap with interior domain
@@ -1647,7 +1647,7 @@ CONTAINS
       !! ** Purpose :   Check numerical schemes consistency between
       !!                segments having a common corner
       !!
-      !! ** Method  :   
+      !! ** Method  :
       !!----------------------------------------------------------------------
       INTEGER, INTENT(in)  ::   ib1, ib2
       INTEGER :: itest
@@ -1662,11 +1662,11 @@ CONTAINS
       IF( nn_dyn3d_dta(ib1) /= nn_dyn3d_dta(ib2) )   itest = itest + 1
       IF( nn_tra_dta  (ib1) /= nn_tra_dta  (ib2) )   itest = itest + 1
       !
-      IF( nn_rimwidth(ib1) /= nn_rimwidth(ib2) )   itest = itest + 1   
+      IF( nn_rimwidth(ib1) /= nn_rimwidth(ib2) )   itest = itest + 1
       !
       IF( itest>0 ) THEN
          IF(lwp) WRITE(numout,*) ' E R R O R : Segments ', ib1, 'and ', ib2
-         IF(lwp) WRITE(numout,*) ' ==========  have different open bdy schemes'                                                  
+         IF(lwp) WRITE(numout,*) ' ==========  have different open bdy schemes'
          IF(lwp) WRITE(numout,*)
          nstop = nstop + 1
       ENDIF

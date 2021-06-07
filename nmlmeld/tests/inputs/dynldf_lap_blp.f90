@@ -15,7 +15,7 @@ MODULE dynldf_lap_blp
    USE oce            ! ocean dynamics and tracers
    USE dom_oce        ! ocean space and time domain
    USE ldfdyn         ! lateral diffusion: eddy viscosity coef.
-   USE ldfslp         ! iso-neutral slopes 
+   USE ldfslp         ! iso-neutral slopes
    USE zdf_oce        ! ocean vertical physics
    !
    USE in_out_manager ! I/O manager
@@ -36,12 +36,12 @@ MODULE dynldf_lap_blp
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: dynldf_lap_blp.F90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: dynldf_lap_blp.F90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
 CONTAINS
@@ -49,12 +49,12 @@ CONTAINS
    SUBROUTINE dyn_ldf_lap( kt, pub, pvb, pua, pva, kpass )
       !!----------------------------------------------------------------------
       !!                     ***  ROUTINE dyn_ldf_lap  ***
-      !!                       
-      !! ** Purpose :   Compute the before horizontal momentum diffusive 
+      !!
+      !! ** Purpose :   Compute the before horizontal momentum diffusive
       !!      trend and add it to the general trend of momentum equation.
       !!
-      !! ** Method  :   The Laplacian operator apply on horizontal velocity is 
-      !!      writen as :   grad_h( ahmt div_h(U )) - curl_h( ahmf curl_z(U) ) 
+      !! ** Method  :   The Laplacian operator apply on horizontal velocity is
+      !!      writen as :   grad_h( ahmt div_h(U )) - curl_h( ahmf curl_z(U) )
       !!
       !! ** Action : - pua, pva increased by the harmonic operator applied on pub, pvb.
       !!----------------------------------------------------------------------
@@ -95,8 +95,8 @@ CONTAINS
                zdiv(ji,jj)     = ahmt(ji,jj,jk) * r1_e1e2t(ji,jj) / e3t_b(ji,jj,jk)                                         &
                   &     * (  e2u(ji,jj)*e3u_b(ji,jj,jk) * pub(ji,jj,jk) - e2u(ji-1,jj)*e3u_b(ji-1,jj,jk) * pub(ji-1,jj,jk)  &
                   &        + e1v(ji,jj)*e3v_b(ji,jj,jk) * pvb(ji,jj,jk) - e1v(ji,jj-1)*e3v_b(ji,jj-1,jk) * pvb(ji,jj-1,jk)  )
-            END DO  
-         END DO  
+            END DO
+         END DO
          !
          DO jj = 2, jpjm1                             ! - curl( curl) + grad( div )
             DO ji = 2, jpim1   ! vector opt.
@@ -119,8 +119,8 @@ CONTAINS
    SUBROUTINE dyn_ldf_blp( kt, pub, pvb, pua, pva )
       !!----------------------------------------------------------------------
       !!                 ***  ROUTINE dyn_ldf_blp  ***
-      !!                    
-      !! ** Purpose :   Compute the before lateral momentum viscous trend 
+      !!
+      !! ** Purpose :   Compute the before lateral momentum viscous trend
       !!              and add it to the general trend of momentum equation.
       !!
       !! ** Method  :   The lateral viscous trends is provided by a bilaplacian

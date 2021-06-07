@@ -13,7 +13,7 @@ MODULE dynadv_ubs
    !!----------------------------------------------------------------------
    !!   dyn_adv_ubs   : flux form momentum advection using    (ln_dynadv=T)
    !!                   an 3rd order Upstream Biased Scheme or Quick scheme
-   !!                   combined with 2nd or 4th order finite differences 
+   !!                   combined with 2nd or 4th order finite differences
    !!----------------------------------------------------------------------
    USE oce            ! ocean dynamics and tracers
    USE dom_oce        ! ocean space and time domain
@@ -42,7 +42,7 @@ MODULE dynadv_ubs
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -59,25 +59,25 @@ CONTAINS
       !! ** Purpose :   Compute the now momentum advection trend in flux form
       !!              and the general trend of the momentum equation.
       !!
-      !! ** Method  :   The scheme is the one implemeted in ROMS. It depends 
-      !!      on two parameter gamma1 and gamma2. The former control the 
-      !!      upstream baised part of the scheme and the later the centred 
+      !! ** Method  :   The scheme is the one implemeted in ROMS. It depends
+      !!      on two parameter gamma1 and gamma2. The former control the
+      !!      upstream baised part of the scheme and the later the centred
       !!      part:     gamma1 = 0    pure centered  (no diffusive part)
       !!                       = 1/4  Quick scheme
       !!                       = 1/3  3rd order Upstream biased scheme
-      !!                gamma2 = 0    2nd order finite differencing 
+      !!                gamma2 = 0    2nd order finite differencing
       !!                       = 1/32 4th order finite differencing
       !!      For stability reasons, the first term of the fluxes which cor-
-      !!      responds to a second order centered scheme is evaluated using  
-      !!      the now velocity (centered in time) while the second term which  
-      !!      is the diffusive part of the scheme, is evaluated using the 
-      !!      before velocity (forward in time). 
-      !!      Default value (hard coded in the begining of the module) are 
+      !!      responds to a second order centered scheme is evaluated using
+      !!      the now velocity (centered in time) while the second term which
+      !!      is the diffusive part of the scheme, is evaluated using the
+      !!      before velocity (forward in time).
+      !!      Default value (hard coded in the begining of the module) are
       !!      gamma1=1/3 and gamma2=1/32.
       !!
       !! ** Action : - (ua,va) updated with the 3D advective momentum trends
       !!
-      !! Reference : Shchepetkin & McWilliams, 2005, Ocean Modelling. 
+      !! Reference : Shchepetkin & McWilliams, 2005, Ocean Modelling.
       !!----------------------------------------------------------------------
       INTEGER, INTENT(in) ::   kt   ! ocean time-step index
       !
@@ -101,9 +101,9 @@ CONTAINS
       zfv_f(:,:,:) = 0._wp
       !
       zlu_uu(:,:,:,:) = 0._wp
-      zlv_vv(:,:,:,:) = 0._wp 
-      zlu_uv(:,:,:,:) = 0._wp 
-      zlv_vu(:,:,:,:) = 0._wp 
+      zlv_vv(:,:,:,:) = 0._wp
+      zlu_uv(:,:,:,:) = 0._wp
+      zlv_vu(:,:,:,:) = 0._wp
       !
       IF( l_trddyn ) THEN           ! trends: store the input trends
          zfu_uw(:,:,:) = ua(:,:,:)
@@ -115,7 +115,7 @@ CONTAINS
          !                                         ! horizontal volume fluxes
          zfu(:,:,jk) = e2u(:,:) * e3u_n(:,:,jk) * un(:,:,jk)
          zfv(:,:,jk) = e1v(:,:) * e3v_n(:,:,jk) * vn(:,:,jk)
-         !            
+         !
          DO jj = 2, jpjm1                          ! laplacian
             DO ji = 2, jpim1   ! vector opt.
                zlu_uu(ji,jj,jk,1) = ( ub (ji+1,jj  ,jk) - 2.*ub (ji,jj,jk) + ub (ji-1,jj  ,jk) ) * umask(ji,jj,jk)
@@ -135,7 +135,7 @@ CONTAINS
          END DO
       END DO
       CALL lbc_lnk_multi( zlu_uu(:,:,:,1), 'U', 1. , zlu_uv(:,:,:,1), 'U', 1.,  &
-                      &   zlu_uu(:,:,:,2), 'U', 1. , zlu_uv(:,:,:,2), 'U', 1.,  & 
+                      &   zlu_uu(:,:,:,2), 'U', 1. , zlu_uv(:,:,:,2), 'U', 1.,  &
                       &   zlv_vv(:,:,:,1), 'V', 1. , zlv_vu(:,:,:,1), 'V', 1.,  &
                       &   zlv_vv(:,:,:,2), 'V', 1. , zlv_vu(:,:,:,2), 'V', 1.   )
       !
@@ -199,7 +199,7 @@ CONTAINS
       !                                      ! ==================== !
       !                                      !  Vertical advection  !
       !                                      ! ==================== !
-      DO jj = 2, jpjm1                             ! surface/bottom advective fluxes set to zero                  
+      DO jj = 2, jpjm1                             ! surface/bottom advective fluxes set to zero
          DO ji = 2, jpim1
             zfu_uw(ji,jj,jpk) = 0._wp
             zfv_vw(ji,jj,jpk) = 0._wp

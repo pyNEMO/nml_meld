@@ -14,15 +14,15 @@ MODULE domhgr
    !!  NEMO      1.0  ! 2002-08  (G. Madec)  F90: Free form and module, namelist
    !!             -   ! 2004-01  (A.M. Treguier, J.M. Molines) Case 4 (Mercator mesh)
    !!                            use of parameters in par_CONFIG-Rxx.h90, not in namelist
-   !!             -   ! 2004-05  (A. Koch-Larrouy) Add Gyre configuration 
+   !!             -   ! 2004-05  (A. Koch-Larrouy) Add Gyre configuration
    !!            3.7  ! 2015-09  (G. Madec, S. Flavoni) add cell surface and their inverse
    !!                                       add optional read of e1e2u & e1e2v
    !!             -   ! 2016-04  (S. Flavoni, G. Madec) new configuration interface: read or usrdef.F90
    !!----------------------------------------------------------------------
 
    !!----------------------------------------------------------------------
-   !!   dom_hgr       : initialize the horizontal mesh 
-   !!   hgr_read      : read horizontal information in the domain configuration file 
+   !!   dom_hgr       : initialize the horizontal mesh
+   !!   hgr_read      : read horizontal information in the domain configuration file
    !!----------------------------------------------------------------------
    USE dom_oce        ! ocean space and time domain
    USE par_oce        ! ocean space and time domain
@@ -41,7 +41,7 @@ MODULE domhgr
 
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: domhgr.F90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: domhgr.F90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
 CONTAINS
@@ -50,25 +50,25 @@ CONTAINS
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE dom_hgr  ***
       !!
-      !! ** Purpose :   Read or compute the geographical position (in degrees)  
-      !!      of the model grid-points, the horizontal scale factors (in meters), 
+      !! ** Purpose :   Read or compute the geographical position (in degrees)
+      !!      of the model grid-points, the horizontal scale factors (in meters),
       !!      the associated horizontal metrics, and the Coriolis factor (in s-1).
       !!
       !! ** Method  :   Controlled by ln_read_cfg logical
-      !!              =T : all needed arrays are read in mesh_mask.nc file 
-      !!              =F : user-defined configuration, all needed arrays 
-      !!                   are computed in usr-def_hgr subroutine 
+      !!              =T : all needed arrays are read in mesh_mask.nc file
+      !!              =F : user-defined configuration, all needed arrays
+      !!                   are computed in usr-def_hgr subroutine
       !!
       !!                If Coriolis factor is neither read nor computed (iff=0)
       !!              it is computed from gphit assuming that the mesh is
       !!              defined on the sphere :
       !!                   ff = 2.*omega*sin(gphif)      (in s-1)
-      !!    
+      !!
       !!                If u- & v-surfaces are neither read nor computed (ie1e2u_v=0)
       !!              (i.e. no use of reduced scale factors in some straits)
       !!              they are computed from e1u, e2u, e1v and e2v as:
-      !!                   e1e2u = e1u*e2u   and   e1e2v = e1v*e2v  
-      !!    
+      !!                   e1e2u = e1u*e2u   and   e1e2v = e1v*e2v
+      !!
       !! ** Action  : - define longitude & latitude of t-, u-, v- and f-points (in degrees)
       !!              - define Coriolis parameter at f-point                   (in 1/s)
       !!              - define i- & j-scale factors at t-, u-, v- and f-points (in meters)
@@ -76,7 +76,7 @@ CONTAINS
       !!                (inverse of scale factors 1/e1 & 1/e2, surface e1*e2, ratios e1/e2 & e2/e1)
       !!----------------------------------------------------------------------
       INTEGER ::   ji, jj     ! dummy loop indices
-      INTEGER ::   ie1e2u_v   ! flag for u- & v-surfaces 
+      INTEGER ::   ie1e2u_v   ! flag for u- & v-surfaces
       INTEGER ::   iff        ! flag for Coriolis parameter
       !!----------------------------------------------------------------------
       !
@@ -101,7 +101,7 @@ CONTAINS
             &              e2t   , e2u   , e2v   , e2f   ,   &    !    -     -        -
             &              ie1e2u_v      , e1e2u , e1e2v     )    ! u- & v-surfaces (if gridsize reduction in some straits)
          !
-      ELSE                          !==  User defined configuration  ==! 
+      ELSE                          !==  User defined configuration  ==!
          IF(lwp) WRITE(numout,*)
          IF(lwp) WRITE(numout,*) '          User defined horizontal mesh (usr_def_hgr)'
          !
@@ -116,7 +116,7 @@ CONTAINS
       !
       !                             !==  Coriolis parameter  ==!   (if necessary)
       !
-      IF( iff == 0 ) THEN                 ! Coriolis parameter has not been defined 
+      IF( iff == 0 ) THEN                 ! Coriolis parameter has not been defined
          IF(lwp) WRITE(numout,*) '          Coriolis parameter calculated on the sphere from gphif & gphit'
          ff_f(:,:) = 2. * omega * SIN( rad * gphif(:,:) )     ! compute it on the sphere at f-point
          ff_t(:,:) = 2. * omega * SIN( rad * gphit(:,:) )     !    -        -       -    at t-point
@@ -141,14 +141,14 @@ CONTAINS
       IF( ie1e2u_v == 0 ) THEN               ! u- & v-surfaces have not been defined
          IF(lwp) WRITE(numout,*) '          u- & v-surfaces calculated as e1 e2 product'
          e1e2u (:,:) = e1u(:,:) * e2u(:,:)         ! compute them
-         e1e2v (:,:) = e1v(:,:) * e2v(:,:) 
+         e1e2v (:,:) = e1v(:,:) * e2v(:,:)
       ELSE
          IF(lwp) WRITE(numout,*) '          u- & v-surfaces have been read in "mesh_mask" file:'
          IF(lwp) WRITE(numout,*) '                     grid size reduction in strait(s) is used'
       ENDIF
       r1_e1e2u(:,:) = 1._wp / e1e2u(:,:)     ! compute their invert in any cases
       r1_e1e2v(:,:) = 1._wp / e1e2v(:,:)
-      !   
+      !
       e2_e1u(:,:) = e2u(:,:) / e1u(:,:)
       e1_e2v(:,:) = e1v(:,:) / e2v(:,:)
       !
@@ -159,7 +159,7 @@ CONTAINS
 
 
    SUBROUTINE hgr_read( plamt , plamu , plamv  , plamf  ,   &    ! gridpoints position (required)
-      &                 pphit , pphiu , pphiv  , pphif  ,   &     
+      &                 pphit , pphiu , pphiv  , pphif  ,   &
       &                 kff   , pff_f , pff_t  ,            &    ! Coriolis parameter  (if not on the sphere)
       &                 pe1t  , pe1u  , pe1v   , pe1f   ,   &    ! scale factors       (required)
       &                 pe2t  , pe2u  , pe2v   , pe2f   ,   &
@@ -170,13 +170,13 @@ CONTAINS
       !! ** Purpose :   Read a mesh_mask file in NetCDF format using IOM
       !!
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:), INTENT(out) ::   plamt, plamu, plamv, plamf   ! longitude outputs 
+      REAL(wp), DIMENSION(:,:), INTENT(out) ::   plamt, plamu, plamv, plamf   ! longitude outputs
       REAL(wp), DIMENSION(:,:), INTENT(out) ::   pphit, pphiu, pphiv, pphif   ! latitude outputs
       INTEGER                 , INTENT(out) ::   kff                          ! =1 Coriolis parameter read here, =0 otherwise
       REAL(wp), DIMENSION(:,:), INTENT(out) ::   pff_f, pff_t                 ! Coriolis factor at f-point (if found in file)
-      REAL(wp), DIMENSION(:,:), INTENT(out) ::   pe1t, pe1u, pe1v, pe1f       ! i-scale factors 
+      REAL(wp), DIMENSION(:,:), INTENT(out) ::   pe1t, pe1u, pe1v, pe1f       ! i-scale factors
       REAL(wp), DIMENSION(:,:), INTENT(out) ::   pe2t, pe2u, pe2v, pe2f       ! j-scale factors
-      INTEGER                 , INTENT(out) ::   ke1e2u_v                     ! =1 u- & v-surfaces read here, =0 otherwise 
+      INTEGER                 , INTENT(out) ::   ke1e2u_v                     ! =1 u- & v-surfaces read here, =0 otherwise
       REAL(wp), DIMENSION(:,:), INTENT(out) ::   pe1e2u, pe1e2v              ! u- & v-surfaces (if found in file)
       !
       INTEGER  ::   inum                  ! logical unit
@@ -232,6 +232,6 @@ CONTAINS
       CALL iom_close( inum )
       !
    END SUBROUTINE hgr_read
-    
+
    !!======================================================================
 END MODULE domhgr

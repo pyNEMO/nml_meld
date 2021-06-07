@@ -3,7 +3,7 @@
 MODULE dynldf
    !!======================================================================
    !!                       ***  MODULE  dynldf  ***
-   !! Ocean physics:  lateral diffusivity trends 
+   !! Ocean physics:  lateral diffusivity trends
    !!=====================================================================
    !! History :  2.0  ! 2005-11  (G. Madec)  Original code (new step architecture)
    !!            3.7  ! 2014-01  (F. Lemarie, G. Madec)  restructuration/simplification of ahm specification,
@@ -32,8 +32,8 @@ MODULE dynldf
    IMPLICIT NONE
    PRIVATE
 
-   PUBLIC   dyn_ldf       ! called by step module 
-   PUBLIC   dyn_ldf_init  ! called by opa  module 
+   PUBLIC   dyn_ldf       ! called by step module
+   PUBLIC   dyn_ldf_init  ! called by opa  module
 
    !! * Substitutions
    !!----------------------------------------------------------------------
@@ -44,7 +44,7 @@ MODULE dynldf
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -57,7 +57,7 @@ CONTAINS
    SUBROUTINE dyn_ldf( kt )
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE dyn_ldf  ***
-      !! 
+      !!
       !! ** Purpose :   compute the lateral ocean dynamics physics.
       !!----------------------------------------------------------------------
       INTEGER, INTENT(in) ::   kt   ! ocean time-step index
@@ -69,8 +69,8 @@ CONTAINS
       !
       IF( l_trddyn )   THEN                      ! temporary save of momentum trends
          ALLOCATE( ztrdu(jpi,jpj,jpk) , ztrdv(jpi,jpj,jpk) )
-         ztrdu(:,:,:) = ua(:,:,:) 
-         ztrdv(:,:,:) = va(:,:,:) 
+         ztrdu(:,:,:) = ua(:,:,:)
+         ztrdv(:,:,:) = va(:,:,:)
       ENDIF
 
       SELECT CASE ( nldf_dyn )                   ! compute lateral mixing trend and add it to the general trend
@@ -99,7 +99,7 @@ CONTAINS
    SUBROUTINE dyn_ldf_init
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE dyn_ldf_init  ***
-      !! 
+      !!
       !! ** Purpose :   initializations of the horizontal ocean dynamics physics
       !!----------------------------------------------------------------------
       !

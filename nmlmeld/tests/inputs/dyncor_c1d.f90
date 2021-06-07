@@ -14,7 +14,7 @@ MODULE dyncor_c1d
 CONTAINS
    SUBROUTINE cor_c1d              ! Empty routine
        IMPLICIT NONE
-   END SUBROUTINE cor_c1d   
+   END SUBROUTINE cor_c1d
    SUBROUTINE dyn_cor_c1d ( kt )      ! Empty routine
       IMPLICIT NONE
       INTEGER, INTENT( in ) :: kt

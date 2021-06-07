@@ -23,7 +23,7 @@ MODULE domngb
 
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: domngb.F90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: domngb.F90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
 CONTAINS
@@ -34,7 +34,7 @@ CONTAINS
       !!
       !! ** Purpose :   find the closest grid point from a given lon/lat position
       !!
-      !! ** Method  :   look for minimum distance in cylindrical projection 
+      !! ** Method  :   look for minimum distance in cylindrical projection
       !!                -> not good if located at too high latitude...
       !!----------------------------------------------------------------------
       REAL(wp)        , INTENT(in   ) ::   plon, plat   ! longitude,latitude of the point
@@ -66,8 +66,8 @@ CONTAINS
 
       zgphi(:,:) = zgphi(:,:) - plat
       zdist(:,:) = zglam(:,:) * zglam(:,:) + zgphi(:,:) * zgphi(:,:)
-      
-      IF( lk_mpp ) THEN  
+
+      IF( lk_mpp ) THEN
          CALL mpp_minloc( zdist(:,:), zmask, zmini, kii, kjj)
       ELSE
          iloc(:) = MINLOC( zdist(:,:), mask = zmask(:,:) == 1.e0 )

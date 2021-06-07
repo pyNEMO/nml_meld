@@ -3,7 +3,7 @@
 MODULE dommsk
    !!======================================================================
    !!                       ***  MODULE dommsk   ***
-   !! Ocean initialization : domain land/sea mask 
+   !! Ocean initialization : domain land/sea mask
    !!======================================================================
    !! History :  OPA  ! 1987-07  (G. Madec)  Original code
    !!            6.0  ! 1993-03  (M. Guyon)  symetrical conditions (M. Guyon)
@@ -41,7 +41,7 @@ MODULE dommsk
 
    !                            !!* Namelist namlbc : lateral boundary condition *
    REAL(wp)        :: rn_shlat   ! type of lateral boundary condition on velocity
-   LOGICAL, PUBLIC :: ln_vorlat  !  consistency of vorticity boundary condition 
+   LOGICAL, PUBLIC :: ln_vorlat  !  consistency of vorticity boundary condition
    !                                            with analytical eqs.
 
    !! * Substitutions
@@ -53,12 +53,12 @@ MODULE dommsk
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: dommsk.F90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: dommsk.F90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
 CONTAINS
@@ -70,10 +70,10 @@ CONTAINS
       !! ** Purpose :   Compute land/ocean mask arrays at tracer points, hori-
       !!      zontal velocity points (u & v), vorticity points (f) points.
       !!
-      !! ** Method  :   The ocean/land mask  at t-point is deduced from ko_top 
-      !!      and ko_bot, the indices of the fist and last ocean t-levels which 
+      !! ** Method  :   The ocean/land mask  at t-point is deduced from ko_top
+      !!      and ko_bot, the indices of the fist and last ocean t-levels which
       !!      are either defined in usrdef_zgr or read in zgr_read.
-      !!                The velocity masks (umask, vmask, wmask, wumask, wvmask) 
+      !!                The velocity masks (umask, vmask, wmask, wumask, wvmask)
       !!      are deduced from a product of the two neighboring tmask.
       !!                The vorticity mask (fmask) is deduced from tmask taking
       !!      into account the choice of lateral boundary condition (rn_shlat) :
@@ -88,11 +88,11 @@ CONTAINS
       !!      tmask_h : halo mask at t-point, i.e. excluding duplicated rows/lines
       !!                due to cyclic or North Fold boundaries as well as MPP halos.
       !!
-      !! ** Action :   tmask, umask, vmask, wmask, wumask, wvmask : land/ocean mask 
+      !! ** Action :   tmask, umask, vmask, wmask, wumask, wvmask : land/ocean mask
       !!                         at t-, u-, v- w, wu-, and wv-points (=0. or 1.)
-      !!               fmask   : land/ocean mask at f-point (=0., or =1., or 
+      !!               fmask   : land/ocean mask at f-point (=0., or =1., or
       !!                         =rn_shlat along lateral boundaries)
-      !!               tmask_i : interior ocean mask 
+      !!               tmask_i : interior ocean mask
       !!               tmask_h : halo mask
       !!               ssmask , ssumask, ssvmask, ssfmask : 2D ocean mask
       !!----------------------------------------------------------------------
@@ -122,14 +122,14 @@ CONTAINS
       READ  ( numnam_cfg, namlbc, IOSTAT = ios, ERR = 902 )
 902   IF( ios >  0 )   CALL ctl_nam ( ios , 'namlbc in configuration namelist', lwp )
       IF(lwm) WRITE ( numond, namlbc )
-      
+
       IF(lwp) THEN                  ! control print
          WRITE(numout,*)
          WRITE(numout,*) 'dommsk : ocean mask '
          WRITE(numout,*) '~~~~~~'
          WRITE(numout,*) '   Namelist namlbc'
          WRITE(numout,*) '      lateral momentum boundary cond.    rn_shlat  = ',rn_shlat
-         WRITE(numout,*) '      consistency with analytical form   ln_vorlat = ',ln_vorlat 
+         WRITE(numout,*) '      consistency with analytical form   ln_vorlat = ',ln_vorlat
       ENDIF
       !
       IF(lwp) WRITE(numout,*)
@@ -152,10 +152,10 @@ CONTAINS
             IF( iktop /= 0 ) THEN       ! water in the column
                tmask(ji,jj,iktop:ikbot  ) = 1._wp
             ENDIF
-         END DO  
-      END DO  
+         END DO
+      END DO
 !SF  add here lbc_lnk: bug not still understood : cause now domain configuration is read !
-!!gm I don't understand why...  
+!!gm I don't understand why...
       CALL lbc_lnk( tmask  , 'T', 1._wp )      ! Lateral boundary conditions
 
      ! Mask corrections for bdy (read in mppini2)
@@ -178,7 +178,7 @@ CONTAINS
             END DO
          END DO
       ENDIF
-         
+
       !  Ocean/land mask at u-, v-, and f-points   (computed from tmask)
       ! ----------------------------------------
       ! NB: at this point, fmask is designed for free slip lateral boundary condition
@@ -195,7 +195,7 @@ CONTAINS
          END DO
       END DO
       CALL lbc_lnk_multi( umask, 'U', 1., vmask, 'V', 1., fmask, 'F', 1. )      ! Lateral boundary conditions
- 
+
       ! Ocean/land mask at wu-, wv- and w points    (computed from tmask)
       !-----------------------------------------
       wmask (:,:,1) = tmask(:,:,1)     ! surface
@@ -203,7 +203,7 @@ CONTAINS
       wvmask(:,:,1) = vmask(:,:,1)
       DO jk = 2, jpk                   ! interior values
          wmask (:,:,jk) = tmask(:,:,jk) * tmask(:,:,jk-1)
-         wumask(:,:,jk) = umask(:,:,jk) * umask(:,:,jk-1)   
+         wumask(:,:,jk) = umask(:,:,jk) * umask(:,:,jk-1)
          wvmask(:,:,jk) = vmask(:,:,jk) * vmask(:,:,jk-1)
       END DO
 
@@ -222,14 +222,14 @@ CONTAINS
       ijf = nn_hls   ;   ijl = nlcj - nn_hls + 1
       !
       !                          ! halo mask : 0 on the halo and 1 elsewhere
-      tmask_h(:,:) = 1._wp                  
+      tmask_h(:,:) = 1._wp
       tmask_h( 1 :iif,   :   ) = 0._wp      ! first columns
       tmask_h(iil:jpi,   :   ) = 0._wp      ! last  columns (including mpp extra columns)
       tmask_h(   :   , 1 :ijf) = 0._wp      ! first rows
       tmask_h(   :   ,ijl:jpj) = 0._wp      ! last  rows (including mpp extra rows)
       !
       !                          ! north fold mask
-      tpol(1:jpiglo) = 1._wp 
+      tpol(1:jpiglo) = 1._wp
       fpol(1:jpiglo) = 1._wp
       IF( jperio == 3 .OR. jperio == 4 ) THEN      ! T-point pivot
          tpol(jpiglo/2+1:jpiglo) = 0._wp
@@ -246,18 +246,18 @@ CONTAINS
          fpol(jpiglo/2+1:jpiglo) = 0._wp
       ENDIF
       !
-      !                          ! interior mask : 2D ocean mask x halo mask 
+      !                          ! interior mask : 2D ocean mask x halo mask
       tmask_i(:,:) = ssmask(:,:) * tmask_h(:,:)
 
 
       ! Lateral boundary conditions on velocity (modify fmask)
-      ! ---------------------------------------  
+      ! ---------------------------------------
       IF( rn_shlat /= 0 ) THEN      ! Not free-slip lateral boundary condition
          !
          ALLOCATE( zwf(jpi,jpj) )
          !
          DO jk = 1, jpk
-            zwf(:,:) = fmask(:,:,jk)         
+            zwf(:,:) = fmask(:,:,jk)
             DO jj = 2, jpjm1
                DO ji = 2, jpim1   ! vector opt.
                   IF( fmask(ji,jj,jk) == 0._wp ) THEN
@@ -273,7 +273,7 @@ CONTAINS
                IF( fmask(jpi,jj,jk) == 0._wp ) THEN
                   fmask(jpi,jj,jk) = rn_shlat * MIN( 1._wp , MAX( zwf(jpi,jj+1), zwf(jpim1,jj), zwf(jpi,jj-1) ) )
                ENDIF
-            END DO         
+            END DO
             DO ji = 2, jpim1
                IF( fmask(ji,1,jk) == 0._wp ) THEN
                   fmask(ji, 1 ,jk) = rn_shlat * MIN( 1._wp , MAX( zwf(ji+1,1), zwf(ji,2), zwf(ji-1,1) ) )
@@ -291,13 +291,13 @@ CONTAINS
          ! CAUTION : The fmask may be further modified in dyn_vor_init ( dynvor.F90 ) depending on ln_vorlat
          !
       ENDIF
-      
+
       ! User defined alteration of fmask (use to reduce ocean transport in specified straits)
-      ! -------------------------------- 
+      ! --------------------------------
       !
       CALL usr_def_fmask( cn_cfg, nn_cfg, fmask )
       !
    END SUBROUTINE dom_msk
-   
+
    !!======================================================================
 END MODULE dommsk
