@@ -15,6 +15,7 @@ Using conda: pynemo_namelist_reader supports Win64, OSX and Linux.
 .. note:: It is recommended to create a seperate virtual environment for pynemo_namelist_reader
           Please follow the instructions on doing this at:
           https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html
+
 ::
 
    conda install -c channel pynemo_namelist_reader
@@ -36,4 +37,3 @@ clone the source code from GitHub and run the setup.
 
 .. note:: If building from source in the Anaconda environment all dependencies can
           be installed using conda.
-
