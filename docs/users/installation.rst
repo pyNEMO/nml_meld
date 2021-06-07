@@ -36,4 +36,3 @@ clone the source code from GitHub and run the setup.
    
 .. note:: If building from source in the Anaconda environment all dependencies can
           be installed using conda. 
-
