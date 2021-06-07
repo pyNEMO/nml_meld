@@ -35,5 +35,5 @@ clone the source code from GitHub and run the setup.
    python setup.py install
 
 .. note:: If building from source in the Anaconda environment all dependencies can
-          be installed using conda.
+          be installed using conda. 
 
