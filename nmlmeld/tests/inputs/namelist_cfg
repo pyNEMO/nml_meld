@@ -30,7 +30,7 @@
    nn_istate   =       0   !  output the initial state (1) or not (0)
 /
 !-----------------------------------------------------------------------
-&namusr_def    !   ISOMIP user defined namelist  
+&namusr_def    !   ISOMIP user defined namelist
 !-----------------------------------------------------------------------
    ln_zps      = .true.    ! z-partial-step coordinate
    ln_zco      = .false.   ! z-full-step coordinate
@@ -77,7 +77,7 @@
    ln_isf      = .true.    !  ice shelf melting/freezing                (T => fill namsbc_isf)
 /
 !-----------------------------------------------------------------------
-&namsbc_isf    !  Top boundary layer (ISF)                              (ln_isfcav =T : read (ln_read_cfg=T) 
+&namsbc_isf    !  Top boundary layer (ISF)                              (ln_isfcav =T : read (ln_read_cfg=T)
 !-----------------------------------------------------------------------             or set or usr_def_zgr )
 !              ! file name ! frequency (hours) ! variable ! time interpol. !  clim   ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 !              !           !  (if <0  months)  !   name   !    (logical)   !  (T/F)  ! 'monthly' ! filename ! pairing  ! filename      !
@@ -92,7 +92,7 @@
    sn_Leff_isf = 'rnfisf'  ,         -12       ,'Leff'    ,     .false.    , .true.  , 'yearly'  ,  ''      ,   ''     , ''
 ! for all case
    nn_isf      = 1         !  ice shelf melting/freezing
-                           !  1 = presence of ISF    2 = bg03 parametrisation 
+                           !  1 = presence of ISF    2 = bg03 parametrisation
                            !  3 = rnf file for isf   4 = ISF fwf specified
                            !  option 1 and 4 need ln_isfcav = .true. (domzgr)
 ! only for nn_isf = 1 or 2
@@ -109,7 +109,7 @@
                           ! 2 = velocity and stability dependent Gamma    (Holland et al. 1999)
 /
 !-----------------------------------------------------------------------
-&namsbc_iscpl  !   land ice / ocean coupling option                     
+&namsbc_iscpl  !   land ice / ocean coupling option
 !-----------------------------------------------------------------------
 /
 !!======================================================================
@@ -152,7 +152,7 @@
 &namdrg_top    !   TOP friction                                         (ln_isfcav=T)
 !-----------------------------------------------------------------------
    rn_Cd0     =  2.5e-3    !  drag coefficient [-]
-   rn_Uc0     =  0.16      !  ref. velocity [m/s] (linear drag=Cd0*Uc0) 
+   rn_Uc0     =  0.16      !  ref. velocity [m/s] (linear drag=Cd0*Uc0)
    rn_Cdmax   =  0.1       !  drag value maximum [-] (logarithmic drag)
    rn_ke0     =  0.0e-0    !  background kinetic energy  [m2/s2] (non-linear cases)
    rn_z0      =  3.0e-3    !  roughness [m] (ln_loglayer=T)
@@ -160,10 +160,10 @@
       rn_boost =  50.          !  local boost factor  [-]
 /
 !-----------------------------------------------------------------------
-&namdrg_bot    !   BOTTOM friction                                  
+&namdrg_bot    !   BOTTOM friction
 !-----------------------------------------------------------------------
    rn_Cd0     =  1.e-3    !  drag coefficient [-]
-   rn_Uc0     =  0.4      !  ref. velocity [m/s] (linear drag=Cd0*Uc0) 
+   rn_Uc0     =  0.4      !  ref. velocity [m/s] (linear drag=Cd0*Uc0)
    rn_Cdmax   =  0.1      !  drag value maximum [-] (logarithmic drag)
    rn_ke0     =  2.5e-3   !  background kinetic energy  [m2/s2] (non-linear cases)
    rn_z0      =  3.e-3    !  roughness [m] (ln_loglayer=T)
@@ -190,8 +190,8 @@
 &namtra_adv    !   advection scheme for tracer                          (default: NO selection)
 !-----------------------------------------------------------------------
    ln_traadv_fct =  .true.   !  FCT scheme
-      nn_fct_h   =  2               !  =2/4, horizontal 2nd / 4th order 
-      nn_fct_v   =  2               !  =2/4, vertical   2nd / COMPACT 4th order 
+      nn_fct_h   =  2               !  =2/4, horizontal 2nd / 4th order
+      nn_fct_v   =  2               !  =2/4, vertical   2nd / COMPACT 4th order
 /
 !-----------------------------------------------------------------------
 &namtra_ldf    !   lateral diffusion scheme for tracers                 (default: NO selection)
@@ -199,7 +199,7 @@
    ln_traldf_lap   =  .true.   !    laplacian operator
    ln_traldf_hor   =  .true.   !  horizontal (geopotential)
    !                       !  Coefficients:
-   nn_aht_ijk_t    = 0         !  =  0   constant = 1/2  Ud*Ld   (lap case) 
+   nn_aht_ijk_t    = 0         !  =  0   constant = 1/2  Ud*Ld   (lap case)
       rn_Ud        = 0.02           !  lateral diffusive velocity [m/s]
       rn_Ld        = 10.e+3         !  lateral diffusive length   [m]
 /
@@ -241,7 +241,7 @@
 !-----------------------------------------------------------------------
    ln_dynldf_lap =  .true.     !    laplacian operator
    ln_dynldf_lev =  .true.     !  iso-level
-   nn_ahm_ijk_t  = 0           !  = 0  constant = 1/2  Uv*Lv   (lap case) 
+   nn_ahm_ijk_t  = 0           !  = 0  constant = 1/2  Uv*Lv   (lap case)
       rn_Uv      = 0.12             !  lateral viscous velocity [m/s]
       rn_Lv      = 10.e+3           !  lateral viscous length   [m]
 /

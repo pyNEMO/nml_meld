@@ -30,7 +30,7 @@ MODULE nemogcm
    !!             -   ! 2010-10  (C. Ethe, G. Madec) reorganisation of initialisation phase
    !!            3.3.1! 2011-01  (A. R. Porter, STFC Daresbury) dynamical allocation
    !!             -   ! 2011-11  (C. Harris) decomposition changes for running with CICE
-   !!            3.6  ! 2012-05  (C. Calone, J. Simeon, G. Madec, C. Ethe) Add grid coarsening 
+   !!            3.6  ! 2012-05  (C. Calone, J. Simeon, G. Madec, C. Ethe) Add grid coarsening
    !!             -   ! 2014-12  (G. Madec) remove KPP scheme and cross-land advection (cla)
    !!            4.0  ! 2016-10  (G. Madec, S. Flavoni)  domain configuration / user defined interface
    !!----------------------------------------------------------------------
@@ -54,7 +54,7 @@ MODULE nemogcm
    USE ldfdyn         ! lateral viscosity setting      (ldfdyn_init routine)
    USE ldftra         ! lateral diffusivity setting    (ldftra_init routine)
    USE trdini         ! dyn/tra trends initialization     (trd_init routine)
-   USE asminc         ! assimilation increments     
+   USE asminc         ! assimilation increments
    USE asmbkg         ! writing out state trajectory
    USE diaptr         ! poleward transports           (dia_ptr_init routine)
    USE diadct         ! sections transports           (dia_dct_init routine)
@@ -69,7 +69,7 @@ MODULE nemogcm
    USE dyndmp         ! Momentum damping
    USE stopar         ! Stochastic param.: ???
    USE stopts         ! Stochastic param.: ???
-   USE diurnal_bulk   ! diurnal bulk SST 
+   USE diurnal_bulk   ! diurnal bulk SST
    USE step_diu       ! diurnal bulk SST timestepping (called from here if run offline)
    USE crsini         ! initialise grid coarsening utility
    USE diatmb         ! Top,middle,bottom output
@@ -85,7 +85,7 @@ MODULE nemogcm
    !
    USE lib_mpp        ! distributed memory computing
    USE mppini         ! shared/distributed memory setting (mpp_init routine)
-   USE lbcnfd  , ONLY : isendto, nsndto, nfsloop, nfeloop   ! Setup of north fold exchanges 
+   USE lbcnfd  , ONLY : isendto, nsndto, nfsloop, nfeloop   ! Setup of north fold exchanges
    USE lib_fortran    ! Fortran utilities (allows no signed zero when 'key_nosignedzero' defined)
 
    USE xios           ! xIOserver
@@ -149,14 +149,14 @@ CONTAINS
       IF( .NOT.ln_diurnal_only ) THEN                 !==  Standard time-stepping  ==!
          !
          DO WHILE( istp <= nitend .AND. nstop == 0 )
-            CALL stp        ( istp ) 
+            CALL stp        ( istp )
             istp = istp + 1
          END DO
          !
       ELSE                                            !==  diurnal SST time-steeping only  ==!
          !
          DO WHILE( istp <= nitend .AND. nstop == 0 )
-            CALL stp_diurnal( istp )   ! time step only the diurnal SST 
+            CALL stp_diurnal( istp )   ! time step only the diurnal SST
             istp = istp + 1
          END DO
          !
@@ -207,7 +207,7 @@ CONTAINS
       !
       cltxt  = ''
       cltxt2 = ''
-      clnam  = ''  
+      clnam  = ''
       cxios_context = 'nemo'
       !
       !                             ! Open reference namelist and configuration namelist files
@@ -226,7 +226,7 @@ CONTAINS
 903   IF( ios /= 0 )   CALL ctl_nam ( ios , 'namcfg in reference namelist', .TRUE. )
       REWIND( numnam_cfg )              ! Namelist namcfg in confguration namelist
       READ  ( numnam_cfg, namcfg, IOSTAT = ios, ERR = 904 )
-904   IF( ios >  0 )   CALL ctl_nam ( ios , 'namcfg in configuration namelist', .TRUE. )   
+904   IF( ios >  0 )   CALL ctl_nam ( ios , 'namcfg in configuration namelist', .TRUE. )
 
       !                             !--------------------------!
       !                             !  Set global domain size  !   (control print return in cltxt2)
@@ -260,8 +260,8 @@ CONTAINS
       lwm = (narea == 1)                                    ! control of output namelists
       lwp = (narea == 1) .OR. ln_ctl                        ! control of all listing output print
 
-      IF(lwm) THEN               ! write merged namelists from earlier to output namelist 
-         !                       ! now that the file has been opened in call to mynode. 
+      IF(lwm) THEN               ! write merged namelists from earlier to output namelist
+         !                       ! now that the file has been opened in call to mynode.
          !                       ! NB: nammpp has already been written in mynode (if lk_mpp_mpi)
          WRITE( numond, namctl )
          WRITE( numond, namcfg )
@@ -316,12 +316,12 @@ CONTAINS
       IF( lk_c1d       )   CALL     c1d_init        ! 1D column configuration
                            CALL     wad_init        ! Wetting and drying options
                            CALL     dom_init("OPA") ! Domain
-      IF( ln_crs       )   CALL     crs_init        ! coarsened grid: domain initialization 
+      IF( ln_crs       )   CALL     crs_init        ! coarsened grid: domain initialization
       IF( ln_ctl       )   CALL prt_ctl_init        ! Print control
-      
+
       CALL diurnal_sst_bulk_init                ! diurnal sst
-      IF( ln_diurnal   )   CALL diurnal_sst_coolskin_init   ! cool skin   
-      !                            
+      IF( ln_diurnal   )   CALL diurnal_sst_coolskin_init   ! cool skin
+      !
       IF( ln_diurnal_only ) THEN                   ! diurnal only: a subset of the initialisation routines
          CALL  istate_init                            ! ocean initial state (Dynamics and tracers)
          CALL     sbc_init                            ! Forcings : surface module
@@ -329,22 +329,22 @@ CONTAINS
          IF( ln_diaobs ) THEN                         ! Observation & model comparison
             CALL dia_obs_init                            ! Initialize observational data
             CALL dia_obs( nit000 - 1 )                   ! Observation operator for restart
-         ENDIF     
+         ENDIF
          IF( lk_asminc )   CALL asm_inc_init          ! Assimilation increments
          !
          RETURN                                       ! end of initialization
       ENDIF
-      
+
                            CALL  istate_init    ! ocean initial state (Dynamics and tracers)
 
-      !                                      ! external forcing 
+      !                                      ! external forcing
                            CALL    tide_init    ! tidal harmonics
                            CALL     sbc_init    ! surface boundary conditions (including sea-ice)
                            CALL     bdy_init    ! Open boundaries initialisation
 
       !                                      ! Ocean physics
                            CALL zdf_phy_init    ! Vertical physics
-                                     
+
       !                                         ! Lateral physics
                            CALL ldf_tra_init      ! Lateral ocean tracer physics
                            CALL ldf_eiv_init      ! eddy induced velocity param.
@@ -374,7 +374,7 @@ CONTAINS
       !                                      ! Misc. options
                            CALL sto_par_init    ! Stochastic parametrization
       IF( ln_sto_eos   )   CALL sto_pts_init    ! RRandom T/S fluctuations
-     
+
       !                                      ! Diagnostics
       IF( lk_floats    )   CALL     flo_init    ! drifting Floats
       IF( ln_diacfl    )   CALL dia_cfl_init    ! Initialise CFL diagnostics
@@ -535,7 +535,7 @@ CONTAINS
       INTEGER :: ierr
       !!----------------------------------------------------------------------
       !
-      ierr =        oce_alloc    ()    ! ocean 
+      ierr =        oce_alloc    ()    ! ocean
       ierr = ierr + dia_wri_alloc()
       ierr = ierr + dom_oce_alloc()    ! ocean domain
       ierr = ierr + zdf_oce_alloc()    ! ocean vertical physics

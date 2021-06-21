@@ -7,7 +7,7 @@ MODULE domain
    !!==============================================================================
    !! History :  OPA  !  1990-10  (C. Levy - G. Madec)  Original code
    !!                 !  1992-01  (M. Imbard) insert time step initialization
-   !!                 !  1996-06  (G. Madec) generalized vertical coordinate 
+   !!                 !  1996-06  (G. Madec) generalized vertical coordinate
    !!                 !  1997-02  (G. Madec) creation of domwri.F
    !!                 !  2001-05  (E.Durand - G. Madec) insert closed sea
    !!   NEMO     1.0  !  2002-08  (G. Madec)  F90: Free form and module
@@ -17,7 +17,7 @@ MODULE domain
    !!            3.7  !  2015-11  (G. Madec, A. Coward)  time varying zgr by default
    !!            4.0  !  2016-10  (G. Madec, S. Flavoni)  domain configuration / user defined interface
    !!----------------------------------------------------------------------
-   
+
    !!----------------------------------------------------------------------
    !!   dom_init      : initialize the space and time domain
    !!   dom_glo       : initialize global domain <--> local domain indices
@@ -62,9 +62,9 @@ CONTAINS
    SUBROUTINE dom_init(cdstr)
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE dom_init  ***
-      !!                    
-      !! ** Purpose :   Domain initialization. Call the routines that are 
-      !!              required to create the arrays which define the space 
+      !!
+      !! ** Purpose :   Domain initialization. Call the routines that are
+      !!              required to create the arrays which define the space
       !!              and time domain of the ocean model.
       !!
       !! ** Method  : - dom_msk: compute the masks from the bathymetry file
@@ -76,7 +76,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER ::   ji, jj, jk, ik   ! dummy loop indices
       INTEGER ::   iconf = 0    ! local integers
-      CHARACTER (len=64) ::   cform = "(A12, 3(A13, I7))" 
+      CHARACTER (len=64) ::   cform = "(A12, 3(A13, I7))"
       CHARACTER (len=*), INTENT(IN) :: cdstr                  ! model: NEMO or SAS. Determines core restart variables
       INTEGER , DIMENSION(jpi,jpj) ::   ik_top , ik_bot       ! top and bottom ocean level
       REAL(wp), DIMENSION(jpi,jpj) ::   z1_hu_0, z1_hv_0
@@ -139,7 +139,7 @@ CONTAINS
       CALL dom_zgr( ik_top, ik_bot )   ! Vertical mesh and bathymetry
       CALL dom_msk( ik_top, ik_bot )   ! Masks
       IF( ln_closea )   CALL dom_clo   ! ln_closea=T : closed seas included in the simulation
-                                       ! Read in masks to define closed seas and lakes 
+                                       ! Read in masks to define closed seas and lakes
       !
       DO jj = 1, jpj                   ! depth of the iceshelves
          DO ji = 1, jpi
@@ -165,7 +165,7 @@ CONTAINS
             gdept_b = gdept_0  ;   gdept_n = gdept_0   !        ---          ! depth of grid-points
             gdepw_b = gdepw_0  ;   gdepw_n = gdepw_0   !        ---          !
                                    gde3w_n = gde3w_0   !        ---          !
-         !                                                                  
+         !
               e3t_b =   e3t_0  ;     e3t_n =   e3t_0   ;   e3t_a =  e3t_0    ! scale factors
               e3u_b =   e3u_0  ;     e3u_n =   e3u_0   ;   e3u_a =  e3u_0    !
               e3v_b =   e3v_0  ;     e3v_n =   e3v_0   ;   e3v_a =  e3v_0    !
@@ -179,7 +179,7 @@ CONTAINS
          !
          !        before       !          now          !       after         !
                                       ht_n =    ht_0   !                     ! water column thickness
-               hu_b =    hu_0  ;      hu_n =    hu_0   ;    hu_a =    hu_0   ! 
+               hu_b =    hu_0  ;      hu_n =    hu_0   ;    hu_a =    hu_0   !
                hv_b =    hv_0  ;      hv_n =    hv_0   ;    hv_a =    hv_0   !
             r1_hu_b = z1_hu_0  ;   r1_hu_n = z1_hu_0   ; r1_hu_a = z1_hu_0   ! inverse of water column thickness
             r1_hv_b = z1_hv_0  ;   r1_hv_n = z1_hv_0   ; r1_hv_a = z1_hv_0   !
@@ -187,7 +187,7 @@ CONTAINS
          !
       ELSE                       != time varying : initialize before/now/after variables
          !
-         IF( .NOT.l_offline )  CALL dom_vvl_init 
+         IF( .NOT.l_offline )  CALL dom_vvl_init
          !
       ENDIF
       !
@@ -203,7 +203,7 @@ CONTAINS
          WRITE(numout,*)
          WRITE(numout,*) 'dom_init :   ==>>>   END of domain initialization'
          WRITE(numout,*) '~~~~~~~~'
-         WRITE(numout,*) 
+         WRITE(numout,*)
       ENDIF
       !
    END SUBROUTINE dom_init
@@ -215,7 +215,7 @@ CONTAINS
       !!
       !! ** Purpose :   initialization of global domain <--> local domain indices
       !!
-      !! ** Method  :   
+      !! ** Method  :
       !!
       !! ** Action  : - mig , mjg : local  domain indices ==> global domain indices
       !!              - mi0 , mi1 : global domain indices ==> local  domain indices
@@ -231,8 +231,8 @@ CONTAINS
         mjg(jj) = jj + njmpp - 1
       END DO
       !                              ! global domain indices ==> local domain indices
-      !                                   ! (return (m.0,m.1)=(1,0) if data domain gridpoint is to the west/south of the 
-      !                                   ! local domain, or (m.0,m.1)=(jp.+1,jp.) to the east/north of local domain. 
+      !                                   ! (return (m.0,m.1)=(1,0) if data domain gridpoint is to the west/south of the
+      !                                   ! local domain, or (m.0,m.1)=(jp.+1,jp.) to the east/north of local domain.
       DO ji = 1, jpiglo
         mi0(ji) = MAX( 1 , MIN( ji - nimpp + 1, jpi+1 ) )
         mi1(ji) = MAX( 0 , MIN( ji - nimpp + 1, jpi   ) )
@@ -278,7 +278,7 @@ CONTAINS
    SUBROUTINE dom_nam
       !!----------------------------------------------------------------------
       !!                     ***  ROUTINE dom_nam  ***
-      !!                    
+      !!
       !! ** Purpose :   read domaine namelists and print the variables.
       !!
       !! ** input   : - namrun namelist
@@ -364,9 +364,9 @@ CONTAINS
       nwrite = nn_write
       neuler = nn_euler
       IF( neuler == 1 .AND. .NOT. ln_rstart ) THEN
-         IF(lwp) WRITE(numout,*)  
+         IF(lwp) WRITE(numout,*)
          IF(lwp) WRITE(numout,*)'   ==>>>   Start from rest (ln_rstart=F)'
-         IF(lwp) WRITE(numout,*)'           an Euler initial time step is used : nn_euler is forced to 0 '   
+         IF(lwp) WRITE(numout,*)'           an Euler initial time step is used : nn_euler is forced to 0 '
          neuler = 0
       ENDIF
       !                             ! control of output frequency
@@ -386,7 +386,7 @@ CONTAINS
 
       IF(lwp) WRITE(numout,*)
       SELECT CASE ( nleapy )        ! Choose calendar for IOIPSL
-      CASE (  1 ) 
+      CASE (  1 )
          CALL ioconf_calendar('gregorian')
          IF(lwp) WRITE(numout,*) '   ==>>>   The IOIPSL calendar is "gregorian", i.e. leap year'
       CASE (  0 )
@@ -425,8 +425,8 @@ CONTAINS
 
       IF( TRIM(Agrif_CFixed()) == '0' ) THEN
          lrxios = ln_xios_read.AND.ln_rstart
-!set output file type for XIOS based on NEMO namelist 
-         IF (nn_wxios > 0) lwxios = .TRUE. 
+!set output file type for XIOS based on NEMO namelist
+         IF (nn_wxios > 0) lwxios = .TRUE.
          nxioso = nn_wxios
       ENDIF
 
@@ -444,7 +444,7 @@ CONTAINS
       !! ** Method  :   compute and print extrema of masked scale factors
       !!----------------------------------------------------------------------
       INTEGER ::   iimi1, ijmi1, iimi2, ijmi2, iima1, ijma1, iima2, ijma2
-      INTEGER, DIMENSION(2) ::   iloc   ! 
+      INTEGER, DIMENSION(2) ::   iloc   !
       REAL(wp) ::   ze1min, ze1max, ze2min, ze2max
       !!----------------------------------------------------------------------
       !
@@ -454,10 +454,10 @@ CONTAINS
          CALL mpp_maxloc( e1t(:,:), tmask_i(:,:), ze1max, iima1,ijma1 )
          CALL mpp_maxloc( e2t(:,:), tmask_i(:,:), ze2max, iima2,ijma2 )
       ELSE
-         ze1min = MINVAL( e1t(:,:), mask = tmask_i(:,:) == 1._wp )    
-         ze2min = MINVAL( e2t(:,:), mask = tmask_i(:,:) == 1._wp )    
-         ze1max = MAXVAL( e1t(:,:), mask = tmask_i(:,:) == 1._wp )    
-         ze2max = MAXVAL( e2t(:,:), mask = tmask_i(:,:) == 1._wp )    
+         ze1min = MINVAL( e1t(:,:), mask = tmask_i(:,:) == 1._wp )
+         ze2min = MINVAL( e2t(:,:), mask = tmask_i(:,:) == 1._wp )
+         ze1max = MAXVAL( e1t(:,:), mask = tmask_i(:,:) == 1._wp )
+         ze2max = MAXVAL( e2t(:,:), mask = tmask_i(:,:) == 1._wp )
          !
          iloc  = MINLOC( e1t(:,:), mask = tmask_i(:,:) == 1._wp )
          iimi1 = iloc(1) + nimpp - 1
@@ -488,7 +488,7 @@ CONTAINS
    SUBROUTINE domain_cfg( ldtxt, cd_cfg, kk_cfg, kpi, kpj, kpk, kperio )
       !!----------------------------------------------------------------------
       !!                     ***  ROUTINE dom_nam  ***
-      !!                    
+      !!
       !! ** Purpose :   read the domain size in domain configuration file
       !!
       !! ** Method  :   read the cn_domcfg NetCDF file
@@ -496,8 +496,8 @@ CONTAINS
       CHARACTER(len=*), DIMENSION(:), INTENT(out) ::   ldtxt           ! stored print information
       CHARACTER(len=*)              , INTENT(out) ::   cd_cfg          ! configuration name
       INTEGER                       , INTENT(out) ::   kk_cfg          ! configuration resolution
-      INTEGER                       , INTENT(out) ::   kpi, kpj, kpk   ! global domain sizes 
-      INTEGER                       , INTENT(out) ::   kperio          ! lateral global domain b.c. 
+      INTEGER                       , INTENT(out) ::   kpi, kpj, kpk   ! global domain sizes
+      INTEGER                       , INTENT(out) ::   kperio          ! lateral global domain b.c.
       !
       INTEGER ::   inum, ii   ! local integer
       REAL(wp) ::   zorca_res                     ! local scalars
@@ -525,8 +525,8 @@ CONTAINS
       ELSE                                !- cd_cfg & k_cfg are not used
          cd_cfg = 'UNKNOWN'
          kk_cfg = -9999999
-                                          !- or they may be present as global attributes 
-                                          !- (netcdf only)  
+                                          !- or they may be present as global attributes
+                                          !- (netcdf only)
          IF( iom_file(inum)%iolib == jpnf90 ) THEN
             CALL iom_getatt( inum, 'cn_cfg', cd_cfg )  ! returns   !  if not found
             CALL iom_getatt( inum, 'nn_cfg', kk_cfg )  ! returns -999 if not found
@@ -547,22 +547,22 @@ CONTAINS
       WRITE(ldtxt(ii),*) '      jpjglo = ', kpj                                              ;   ii = ii+1
       WRITE(ldtxt(ii),*) '      jpkglo = ', kpk                                              ;   ii = ii+1
       WRITE(ldtxt(ii),*) '      type of global domain lateral boundary   jperio = ', kperio  ;   ii = ii+1
-      !        
+      !
    END SUBROUTINE domain_cfg
-   
-   
+
+
    SUBROUTINE cfg_write
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE cfg_write  ***
-      !!                   
-      !! ** Purpose :   Create the "cn_domcfg_out" file, a NetCDF file which 
-      !!              contains all the ocean domain informations required to 
+      !!
+      !! ** Purpose :   Create the "cn_domcfg_out" file, a NetCDF file which
+      !!              contains all the ocean domain informations required to
       !!              define an ocean configuration.
       !!
       !! ** Method  :   Write in a file all the arrays required to set up an
       !!              ocean configuration.
       !!
-      !! ** output file :   domcfg_out.nc : domain size, characteristics, horizontal 
+      !! ** output file :   domcfg_out.nc : domain size, characteristics, horizontal
       !!                       mesh, Coriolis parameter, and vertical scale factors
       !!                    NB: also contain ORCA family information
       !!----------------------------------------------------------------------
@@ -580,15 +580,15 @@ CONTAINS
       !                       ! ============================= !
       !                       !  create 'domcfg_out.nc' file  !
       !                       ! ============================= !
-      !         
+      !
       clnam = cn_domcfg_out  ! filename (configuration information)
       CALL iom_open( TRIM(clnam), inum, ldwrt = .TRUE., kiolib = jprstlib )
-      
+
       !
       !                             !==  ORCA family specificities  ==!
       IF( cn_cfg == "ORCA" ) THEN
          CALL iom_rstput( 0, 0, inum, 'ORCA'      , 1._wp            , ktype = jp_i4 )
-         CALL iom_rstput( 0, 0, inum, 'ORCA_index', REAL( nn_cfg, wp), ktype = jp_i4 )         
+         CALL iom_rstput( 0, 0, inum, 'ORCA_index', REAL( nn_cfg, wp), ktype = jp_i4 )
       ENDIF
       !
       !                             !==  global domain size  ==!
@@ -620,12 +620,12 @@ CONTAINS
       CALL iom_rstput( 0, 0, inum, 'glamu', glamu, ktype = jp_r8 )
       CALL iom_rstput( 0, 0, inum, 'glamv', glamv, ktype = jp_r8 )
       CALL iom_rstput( 0, 0, inum, 'glamf', glamf, ktype = jp_r8 )
-      !                                
+      !
       CALL iom_rstput( 0, 0, inum, 'gphit', gphit, ktype = jp_r8 )   ! longitude
       CALL iom_rstput( 0, 0, inum, 'gphiu', gphiu, ktype = jp_r8 )
       CALL iom_rstput( 0, 0, inum, 'gphiv', gphiv, ktype = jp_r8 )
       CALL iom_rstput( 0, 0, inum, 'gphif', gphif, ktype = jp_r8 )
-      !                                
+      !
       CALL iom_rstput( 0, 0, inum, 'e1t'  , e1t  , ktype = jp_r8 )   ! i-scale factors (e1.)
       CALL iom_rstput( 0, 0, inum, 'e1u'  , e1u  , ktype = jp_r8 )
       CALL iom_rstput( 0, 0, inum, 'e1v'  , e1v  , ktype = jp_r8 )
@@ -640,7 +640,7 @@ CONTAINS
       CALL iom_rstput( 0, 0, inum, 'ff_t' , ff_t , ktype = jp_r8 )
       !
       !                             !==  vertical mesh  ==!
-      !                                                     
+      !
       CALL iom_rstput( 0, 0, inum, 'e3t_1d'  , e3t_1d , ktype = jp_r8 )   ! reference 1D-coordinate
       CALL iom_rstput( 0, 0, inum, 'e3w_1d'  , e3w_1d , ktype = jp_r8 )
       !
@@ -651,7 +651,7 @@ CONTAINS
       CALL iom_rstput( 0, 0, inum, 'e3w_0'   , e3w_0  , ktype = jp_r8 )
       CALL iom_rstput( 0, 0, inum, 'e3uw_0'  , e3uw_0 , ktype = jp_r8 )
       CALL iom_rstput( 0, 0, inum, 'e3vw_0'  , e3vw_0 , ktype = jp_r8 )
-      !                                         
+      !
       !                             !==  wet top and bottom level  ==!   (caution: multiplied by ssmask)
       !
       CALL iom_rstput( 0, 0, inum, 'top_level'    , REAL( mikt, wp )*ssmask , ktype = jp_i4 )   ! nb of ocean T-points (ISF)
@@ -673,7 +673,7 @@ CONTAINS
       ENDIF
       !
       !                                ! ============================
-      !                                !        close the files 
+      !                                !        close the files
       !                                ! ============================
       CALL iom_close( inum )
       !

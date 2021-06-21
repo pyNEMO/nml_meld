@@ -10,12 +10,12 @@ MODULE dynspg_exp
    !!----------------------------------------------------------------------
 
    !!----------------------------------------------------------------------
-   !!   dyn_spg_exp  : update the momentum trend with the surface 
-   !!                      pressure gradient in the free surface constant  
+   !!   dyn_spg_exp  : update the momentum trend with the surface
+   !!                      pressure gradient in the free surface constant
    !!                      volume case with vector optimization
    !!----------------------------------------------------------------------
-   USE oce             ! ocean dynamics and tracers 
-   USE dom_oce         ! ocean space and time domain 
+   USE oce             ! ocean dynamics and tracers
+   USE dom_oce         ! ocean space and time domain
    USE sbc_oce         ! surface boundary condition: ocean
    USE phycst          ! physical constants
    !
@@ -28,7 +28,7 @@ MODULE dynspg_exp
    IMPLICIT NONE
    PRIVATE
 
-   PUBLIC   dyn_spg_exp   ! called in dynspg.F90 
+   PUBLIC   dyn_spg_exp   ! called in dynspg.F90
 
    !! * Substitutions
    !!----------------------------------------------------------------------
@@ -39,7 +39,7 @@ MODULE dynspg_exp
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -54,7 +54,7 @@ CONTAINS
       !!                  ***  routine dyn_spg_exp  ***
       !!
       !! ** Purpose :   Compute the now trend due to the surface pressure
-      !!              gradient in case of explicit free surface formulation and 
+      !!              gradient in case of explicit free surface formulation and
       !!              add it to the general trend of momentum equation.
       !!
       !! ** Method  :   Explicit free surface formulation. Add to the general
@@ -63,7 +63,7 @@ CONTAINS
       !!              where spgu = -1/rau0 d/dx(ps) = -g/e1u di( sshn )
       !!                    spgv = -1/rau0 d/dy(ps) = -g/e2v dj( sshn )
       !!
-      !! ** Action :   (ua,va)   trend of horizontal velocity increased by 
+      !! ** Action :   (ua,va)   trend of horizontal velocity increased by
       !!                         the surf. pressure gradient trend
       !!---------------------------------------------------------------------
       INTEGER, INTENT(in)  ::   kt   ! ocean time-step index
@@ -87,7 +87,7 @@ CONTAINS
             DO ji = 2, jpim1   ! vector opt.
                spgu(ji,jj) = - grav * ( sshn(ji+1,jj) - sshn(ji,jj) ) * r1_e1u(ji,jj)
                spgv(ji,jj) = - grav * ( sshn(ji,jj+1) - sshn(ji,jj) ) * r1_e2v(ji,jj)
-            END DO 
+            END DO
          END DO
          !
          DO jk = 1, jpkm1                    ! Add it to the general trend

@@ -42,7 +42,7 @@ MODULE dynhpg
    !
    USE in_out_manager  ! I/O manager
    USE prtctl          ! Print control
-   USE lbclnk          ! lateral boundary condition 
+   USE lbclnk          ! lateral boundary condition
    USE lib_mpp         ! MPP library
    USE eosbn2          ! compute density
    USE timing          ! Timing
@@ -82,7 +82,7 @@ MODULE dynhpg
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -210,7 +210,7 @@ CONTAINS
       IF( ln_hpg_isf ) THEN   ;   nhpg = np_isf   ;   ioptio = ioptio +1   ;   ENDIF
       !
       IF( ioptio /= 1 )   CALL ctl_stop( 'NO or several hydrostatic pressure gradient options used' )
-      ! 
+      !
       IF(lwp) THEN
          WRITE(numout,*)
          SELECT CASE( nhpg )
@@ -223,7 +223,7 @@ CONTAINS
          END SELECT
          WRITE(numout,*)
       ENDIF
-      !                          
+      !
       IF ( .NOT. ln_isfcav ) THEN     !--- no ice shelf load
          riceload(:,:) = 0._wp
          !
@@ -231,14 +231,14 @@ CONTAINS
          !
          IF(lwp) WRITE(numout,*)
          IF(lwp) WRITE(numout,*) '   ice shelf case: set the ice-shelf load'
-         ALLOCATE( zts_top(jpi,jpj,jpts) , zrhd(jpi,jpj,jpk) , zrhdtop_isf(jpi,jpj) , ziceload(jpi,jpj) ) 
+         ALLOCATE( zts_top(jpi,jpj,jpts) , zrhd(jpi,jpj,jpk) , zrhdtop_isf(jpi,jpj) , ziceload(jpi,jpj) )
          !
          znad = 1._wp                     !- To use density and not density anomaly
          !
          !                                !- assume water displaced by the ice shelf is at T=-1.9 and S=34.4 (rude)
          zts_top(:,:,jp_tem) = -1.9_wp   ;   zts_top(:,:,jp_sal) = 34.4_wp
          !
-         DO jk = 1, jpk                   !- compute density of the water displaced by the ice shelf 
+         DO jk = 1, jpk                   !- compute density of the water displaced by the ice shelf
             CALL eos( zts_top(:,:,:), gdept_n(:,:,jk), zrhd(:,:,jk) )
          END DO
          !
@@ -246,7 +246,7 @@ CONTAINS
          CALL eos( zts_top , risfdep, zrhdtop_isf )
          !
          !                                !- Surface value + ice shelf gradient
-         ziceload = 0._wp                       ! compute pressure due to ice shelf load 
+         ziceload = 0._wp                       ! compute pressure due to ice shelf load
          DO jj = 1, jpj                         ! (used to compute hpgi/j for all the level from 1 to miku/v)
             DO ji = 1, jpi                      ! divided by 2 later
                ikt = mikt(ji,jj)
@@ -261,7 +261,7 @@ CONTAINS
          END DO
          riceload(:,:) = ziceload(:,:)  ! need to be saved for diaar5
          !
-         DEALLOCATE( zts_top , zrhd , zrhdtop_isf , ziceload ) 
+         DEALLOCATE( zts_top , zrhd , zrhdtop_isf , ziceload )
       ENDIF
       !
    END SUBROUTINE dyn_hpg_init
@@ -463,7 +463,7 @@ CONTAINS
       !
       IF( ln_wd_il ) THEN
         DO jj = 2, jpjm1
-           DO ji = 2, jpim1 
+           DO ji = 2, jpim1
              ll_tmp1 = MIN(  sshn(ji,jj)               ,  sshn(ji+1,jj) ) >                &
                   &    MAX( -ht_0(ji,jj)               , -ht_0(ji+1,jj) ) .AND.            &
                   &    MAX(  sshn(ji,jj) +  ht_0(ji,jj),  sshn(ji+1,jj) + ht_0(ji+1,jj) )  &
@@ -481,7 +481,7 @@ CONTAINS
              ELSE
                zcpx(ji,jj) = 0._wp
              END IF
-      
+
              ll_tmp1 = MIN(  sshn(ji,jj)              ,  sshn(ji,jj+1) ) >                &
                   &    MAX( -ht_0(ji,jj)              , -ht_0(ji,jj+1) ) .AND.            &
                   &    MAX(  sshn(ji,jj) + ht_0(ji,jj),  sshn(ji,jj+1) + ht_0(ji,jj+1) )  &
@@ -520,7 +520,7 @@ CONTAINS
             !
             IF( ln_wd_il ) THEN
                zhpi(ji,jj,1) = zhpi(ji,jj,1) * zcpx(ji,jj)
-               zhpj(ji,jj,1) = zhpj(ji,jj,1) * zcpy(ji,jj) 
+               zhpj(ji,jj,1) = zhpj(ji,jj,1) * zcpy(ji,jj)
                zuap = zuap * zcpx(ji,jj)
                zvap = zvap * zcpy(ji,jj)
             ENDIF
@@ -550,7 +550,7 @@ CONTAINS
                !
                IF( ln_wd_il ) THEN
                   zhpi(ji,jj,jk) = zhpi(ji,jj,jk) * zcpx(ji,jj)
-                  zhpj(ji,jj,jk) = zhpj(ji,jj,jk) * zcpy(ji,jj) 
+                  zhpj(ji,jj,jk) = zhpj(ji,jj,jk) * zcpy(ji,jj)
                   zuap = zuap * zcpx(ji,jj)
                   zvap = zvap * zcpy(ji,jj)
                ENDIF
@@ -583,7 +583,7 @@ CONTAINS
       !!         ua = ua - 1/e1u * zhpi
       !!         va = va - 1/e2v * zhpj
       !!      iceload is added and partial cell case are added to the top and bottom
-      !!      
+      !!
       !! ** Action : - Update (ua,va) with the now hydrastatic pressure trend
       !!----------------------------------------------------------------------
       INTEGER, INTENT(in) ::   kt    ! ocean time-step index
@@ -599,7 +599,7 @@ CONTAINS
       !
       znad=1._wp                 ! To use density and not density anomaly
       !
-      !                          ! iniitialised to 0. zhpi zhpi 
+      !                          ! iniitialised to 0. zhpi zhpi
       zhpi(:,:,:) = 0._wp   ;   zhpj(:,:,:) = 0._wp
 
       ! compute rhd at the ice/oce interface (ocean side)
@@ -613,8 +613,8 @@ CONTAINS
       END DO
       CALL eos( zts_top, risfdep, zrhdtop_oce )
 
-!==================================================================================     
-!===== Compute surface value ===================================================== 
+!==================================================================================
+!===== Compute surface value =====================================================
 !==================================================================================
       DO jj = 2, jpjm1
          DO ji = 2, jpim1   ! vector opt.
@@ -627,12 +627,12 @@ CONTAINS
                &                                    * ( 2._wp * znad + rhd(ji+1,jj,iktp1i) + zrhdtop_oce(ji+1,jj) )   &
                &                                  - 0.5_wp * e3w_n(ji,jj,ikt)                                         &
                &                                    * ( 2._wp * znad + rhd(ji,jj,ikt) + zrhdtop_oce(ji,jj) )          &
-               &                                  + ( riceload(ji+1,jj) - riceload(ji,jj))                            ) 
+               &                                  + ( riceload(ji+1,jj) - riceload(ji,jj))                            )
             zhpj(ji,jj,1) = zcoef0 / e2v(ji,jj) * ( 0.5_wp * e3w_n(ji,jj+1,iktp1j)                                    &
                &                                    * ( 2._wp * znad + rhd(ji,jj+1,iktp1j) + zrhdtop_oce(ji,jj+1) )   &
-               &                                  - 0.5_wp * e3w_n(ji,jj,ikt)                                         & 
+               &                                  - 0.5_wp * e3w_n(ji,jj,ikt)                                         &
                &                                    * ( 2._wp * znad + rhd(ji,jj,ikt) + zrhdtop_oce(ji,jj) )          &
-               &                                  + ( riceload(ji,jj+1) - riceload(ji,jj))                            ) 
+               &                                  + ( riceload(ji,jj+1) - riceload(ji,jj))                            )
             ! s-coordinate pressure gradient correction (=0 if z coordinate)
             zuap = -zcoef0 * ( rhd    (ji+1,jj,1) + rhd    (ji,jj,1) + 2._wp * znad )   &
                &           * ( gde3w_n(ji+1,jj,1) - gde3w_n(ji,jj,1) ) * r1_e1u(ji,jj)
@@ -643,8 +643,8 @@ CONTAINS
             va(ji,jj,1) = va(ji,jj,1) + (zhpj(ji,jj,1) + zvap) * vmask(ji,jj,1)
          END DO
       END DO
-!==================================================================================     
-!===== Compute interior value ===================================================== 
+!==================================================================================
+!===== Compute interior value =====================================================
 !==================================================================================
       ! interior value (2=<jk=<jpkm1)
       DO jk = 2, jpkm1
@@ -697,7 +697,7 @@ CONTAINS
       IF( ln_wd_il ) THEN
          ALLOCATE( zcpx(jpi,jpj) , zcpy(jpi,jpj) )
         DO jj = 2, jpjm1
-           DO ji = 2, jpim1 
+           DO ji = 2, jpim1
              ll_tmp1 = MIN(  sshn(ji,jj)              ,  sshn(ji+1,jj) ) >                &
                   &    MAX( -ht_0(ji,jj)              , -ht_0(ji+1,jj) ) .AND.            &
                   &    MAX(  sshn(ji,jj) + ht_0(ji,jj),  sshn(ji+1,jj) + ht_0(ji+1,jj) )  &
@@ -714,7 +714,7 @@ CONTAINS
              ELSE
                zcpx(ji,jj) = 0._wp
              END IF
-      
+
              ll_tmp1 = MIN(  sshn(ji,jj)              ,  sshn(ji,jj+1) ) >                &
                   &    MAX( -ht_0(ji,jj)              , -ht_0(ji,jj+1) ) .AND.            &
                   &    MAX(  sshn(ji,jj) + ht_0(ji,jj),  sshn(ji,jj+1) + ht_0(ji,jj+1) )  &
@@ -905,7 +905,7 @@ CONTAINS
             zhpj(ji,jj,1) = ( rho_k(ji  ,jj+1,1) - rho_k(ji,jj,1) - rho_j(ji,jj,1) ) * r1_e2v(ji,jj)
             IF( ln_wd_il ) THEN
               zhpi(ji,jj,1) = zhpi(ji,jj,1) * zcpx(ji,jj)
-              zhpj(ji,jj,1) = zhpj(ji,jj,1) * zcpy(ji,jj) 
+              zhpj(ji,jj,1) = zhpj(ji,jj,1) * zcpy(ji,jj)
             ENDIF
             ! add to the general momentum trend
             ua(ji,jj,1) = ua(ji,jj,1) + zhpi(ji,jj,1)
@@ -928,7 +928,7 @@ CONTAINS
                   &               -( rho_j(ji,jj  ,jk) - rho_j(ji,jj,jk-1) )  ) * r1_e2v(ji,jj)
                IF( ln_wd_il ) THEN
                  zhpi(ji,jj,jk) = zhpi(ji,jj,jk) * zcpx(ji,jj)
-                 zhpj(ji,jj,jk) = zhpj(ji,jj,jk) * zcpy(ji,jj) 
+                 zhpj(ji,jj,jk) = zhpj(ji,jj,jk) * zcpy(ji,jj)
                ENDIF
                ! add to the general momentum trend
                ua(ji,jj,jk) = ua(ji,jj,jk) + zhpi(ji,jj,jk)
@@ -985,7 +985,7 @@ CONTAINS
       IF( ln_wd_il ) THEN
          ALLOCATE( zcpx(jpi,jpj) , zcpy(jpi,jpj) )
          DO jj = 2, jpjm1
-           DO ji = 2, jpim1 
+           DO ji = 2, jpim1
              ll_tmp1 = MIN(  sshn(ji,jj)              ,  sshn(ji+1,jj) ) >                &
                   &    MAX( -ht_0(ji,jj)              , -ht_0(ji+1,jj) ) .AND.            &
                   &    MAX(  sshn(ji,jj) + ht_0(ji,jj),  sshn(ji+1,jj) + ht_0(ji+1,jj) )  &
@@ -1000,12 +1000,12 @@ CONTAINS
                ! no worries about  sshn(ji+1,jj) -  sshn(ji  ,jj) = 0, it won't happen ! here
                zcpx(ji,jj) = ABS( (sshn(ji+1,jj) + ht_0(ji+1,jj) - sshn(ji,jj) - ht_0(ji,jj)) &
                            &    / (sshn(ji+1,jj) -  sshn(ji  ,jj)) )
-              
+
                 zcpx(ji,jj) = max(min( zcpx(ji,jj) , 1.0_wp),0.0_wp)
              ELSE
                zcpx(ji,jj) = 0._wp
              END IF
-      
+
              ll_tmp1 = MIN(  sshn(ji,jj)              ,  sshn(ji,jj+1) ) >                &
                   &    MAX( -ht_0(ji,jj)              , -ht_0(ji,jj+1) ) .AND.            &
                   &    MAX(  sshn(ji,jj) + ht_0(ji,jj),  sshn(ji,jj+1) + ht_0(ji,jj+1) )  &
@@ -1102,14 +1102,14 @@ CONTAINS
         DO ji = 2, jpim1
 !!gm BUG ?    if it is ssh at u- & v-point then it should be:
 !          zsshu_n(ji,jj) = (e1e2t(ji,jj) * sshn(ji,jj) + e1e2t(ji+1,jj) * sshn(ji+1,jj)) * &
-!                         & r1_e1e2u(ji,jj) * umask(ji,jj,1) * 0.5_wp 
+!                         & r1_e1e2u(ji,jj) * umask(ji,jj,1) * 0.5_wp
 !          zsshv_n(ji,jj) = (e1e2t(ji,jj) * sshn(ji,jj) + e1e2t(ji,jj+1) * sshn(ji,jj+1)) * &
-!                         & r1_e1e2v(ji,jj) * vmask(ji,jj,1) * 0.5_wp 
+!                         & r1_e1e2v(ji,jj) * vmask(ji,jj,1) * 0.5_wp
 !!gm not this:
           zsshu_n(ji,jj) = (e1e2u(ji,jj) * sshn(ji,jj) + e1e2u(ji+1, jj) * sshn(ji+1,jj)) * &
-                         & r1_e1e2u(ji,jj) * umask(ji,jj,1) * 0.5_wp 
+                         & r1_e1e2u(ji,jj) * umask(ji,jj,1) * 0.5_wp
           zsshv_n(ji,jj) = (e1e2v(ji,jj) * sshn(ji,jj) + e1e2v(ji+1, jj) * sshn(ji,jj+1)) * &
-                         & r1_e1e2v(ji,jj) * vmask(ji,jj,1) * 0.5_wp 
+                         & r1_e1e2v(ji,jj) * vmask(ji,jj,1) * 0.5_wp
         END DO
       END DO
 
@@ -1117,7 +1117,7 @@ CONTAINS
 
       DO jj = 2, jpjm1
         DO ji = 2, jpim1
-          zu(ji,jj,1) = - ( e3u_n(ji,jj,1) - zsshu_n(ji,jj) * znad) 
+          zu(ji,jj,1) = - ( e3u_n(ji,jj,1) - zsshu_n(ji,jj) * znad)
           zv(ji,jj,1) = - ( e3v_n(ji,jj,1) - zsshv_n(ji,jj) * znad)
         END DO
       END DO
@@ -1215,7 +1215,7 @@ CONTAINS
                   zdpdx1 = zdpdx1 * zcpx(ji,jj) * wdrampu(ji,jj)
                   zdpdx2 = zdpdx2 * zcpx(ji,jj) * wdrampu(ji,jj)
                ENDIF
-               ua(ji,jj,jk) = ua(ji,jj,jk) + (zdpdx1 + zdpdx2) * umask(ji,jj,jk) 
+               ua(ji,jj,jk) = ua(ji,jj,jk) + (zdpdx1 + zdpdx2) * umask(ji,jj,jk)
             ENDIF
 
             !!!!!     for v equation
@@ -1271,8 +1271,8 @@ CONTAINS
                   zdpdy2 = zcoef0 * r1_e2v(ji,jj) * REAL(jjs-jjd, wp) * (zpnss + zpnsd )
                ENDIF
                IF( ln_wd_il ) THEN
-                  zdpdy1 = zdpdy1 * zcpy(ji,jj) * wdrampv(ji,jj) 
-                  zdpdy2 = zdpdy2 * zcpy(ji,jj) * wdrampv(ji,jj) 
+                  zdpdy1 = zdpdy1 * zcpy(ji,jj) * wdrampv(ji,jj)
+                  zdpdy2 = zdpdy2 * zcpy(ji,jj) * wdrampv(ji,jj)
                ENDIF
 
                va(ji,jj,jk) = va(ji,jj,jk) + (zdpdy1 + zdpdy2) * vmask(ji,jj,jk)
@@ -1308,7 +1308,7 @@ CONTAINS
       REAL(wp) ::   zdf(size(fsp,3))
       !!----------------------------------------------------------------------
       !
-!!gm  WHAT !!!!!   THIS IS VERY DANGEROUS !!!!!  
+!!gm  WHAT !!!!!   THIS IS VERY DANGEROUS !!!!!
       jpi   = size(fsp,1)
       jpj   = size(fsp,2)
       jpkm1 = MAX( 1, size(fsp,3) - 1 )

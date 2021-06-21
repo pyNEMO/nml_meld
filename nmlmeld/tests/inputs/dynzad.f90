@@ -8,7 +8,7 @@ MODULE dynzad
    !! History :  OPA  ! 1991-01  (G. Madec) Original code
    !!   NEMO     0.5  ! 2002-07  (G. Madec) Free form, F90
    !!----------------------------------------------------------------------
-   
+
    !!----------------------------------------------------------------------
    !!   dyn_zad       : vertical advection momentum trend
    !!----------------------------------------------------------------------
@@ -25,7 +25,7 @@ MODULE dynzad
 
    IMPLICIT NONE
    PRIVATE
-   
+
    PUBLIC   dyn_zad       ! routine called by dynadv.F90
 
    !! * Substitutions
@@ -37,7 +37,7 @@ MODULE dynzad
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -50,8 +50,8 @@ CONTAINS
    SUBROUTINE dyn_zad ( kt )
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE dynzad  ***
-      !! 
-      !! ** Purpose :   Compute the now vertical momentum advection trend and 
+      !!
+      !! ** Purpose :   Compute the now vertical momentum advection trend and
       !!      add it to the general trend of momentum equation.
       !!
       !! ** Method  :   The now vertical advection of momentum is given by:
@@ -80,13 +80,13 @@ CONTAINS
       ENDIF
 
       IF( l_trddyn )   THEN         ! Save ua and va trends
-         ALLOCATE( ztrdu(jpi,jpj,jpk) , ztrdv(jpi,jpj,jpk) ) 
-         ztrdu(:,:,:) = ua(:,:,:) 
-         ztrdv(:,:,:) = va(:,:,:) 
+         ALLOCATE( ztrdu(jpi,jpj,jpk) , ztrdv(jpi,jpj,jpk) )
+         ztrdu(:,:,:) = ua(:,:,:)
+         ztrdv(:,:,:) = va(:,:,:)
       ENDIF
-      
+
       DO jk = 2, jpkm1              ! Vertical momentum advection at level w and u- and v- vertical
-         DO jj = 2, jpj                   ! vertical fluxes 
+         DO jj = 2, jpj                   ! vertical fluxes
             DO ji = 2, jpi             ! vector opt.
                zww(ji,jj) = 0.25_wp * e1e2t(ji,jj) * wn(ji,jj,jk)
             END DO
@@ -95,18 +95,18 @@ CONTAINS
             DO ji = 2, jpim1        ! vector opt.
                zwuw(ji,jj,jk) = ( zww(ji+1,jj  ) + zww(ji,jj) ) * ( un(ji,jj,jk-1) - un(ji,jj,jk) )
                zwvw(ji,jj,jk) = ( zww(ji  ,jj+1) + zww(ji,jj) ) * ( vn(ji,jj,jk-1) - vn(ji,jj,jk) )
-            END DO  
-         END DO   
+            END DO
+         END DO
       END DO
       !
       ! Surface and bottom advective fluxes set to zero
-      DO jj = 2, jpjm1        
+      DO jj = 2, jpjm1
          DO ji = 2, jpim1           ! vector opt.
             zwuw(ji,jj, 1 ) = 0._wp
             zwvw(ji,jj, 1 ) = 0._wp
             zwuw(ji,jj,jpk) = 0._wp
             zwvw(ji,jj,jpk) = 0._wp
-         END DO  
+         END DO
       END DO
       !
       DO jk = 1, jpkm1              ! Vertical momentum advection at u- and v-points
@@ -114,15 +114,15 @@ CONTAINS
             DO ji = 2, jpim1       ! vector opt.
                ua(ji,jj,jk) = ua(ji,jj,jk) - ( zwuw(ji,jj,jk) + zwuw(ji,jj,jk+1) ) * r1_e1e2u(ji,jj) / e3u_n(ji,jj,jk)
                va(ji,jj,jk) = va(ji,jj,jk) - ( zwvw(ji,jj,jk) + zwvw(ji,jj,jk+1) ) * r1_e1e2v(ji,jj) / e3v_n(ji,jj,jk)
-            END DO  
-         END DO  
+            END DO
+         END DO
       END DO
 
       IF( l_trddyn ) THEN           ! save the vertical advection trends for diagnostic
          ztrdu(:,:,:) = ua(:,:,:) - ztrdu(:,:,:)
          ztrdv(:,:,:) = va(:,:,:) - ztrdv(:,:,:)
          CALL trd_dyn( ztrdu, ztrdv, jpdyn_zad, kt )
-         DEALLOCATE( ztrdu, ztrdv ) 
+         DEALLOCATE( ztrdu, ztrdv )
       ENDIF
       !                             ! Control print
       IF(ln_ctl)   CALL prt_ctl( tab3d_1=ua, clinfo1=' zad  - Ua: ', mask1=umask,   &

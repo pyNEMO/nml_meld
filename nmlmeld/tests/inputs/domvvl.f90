@@ -3,7 +3,7 @@
 MODULE domvvl
    !!======================================================================
    !!                       ***  MODULE domvvl   ***
-   !! Ocean : 
+   !! Ocean :
    !!======================================================================
    !! History :  2.0  !  2006-06  (B. Levier, L. Marie)  original code
    !!            3.1  !  2009-02  (G. Madec, M. Leclair, R. Benshila)  pure z* coordinate
@@ -71,7 +71,7 @@ MODULE domvvl
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -107,7 +107,7 @@ CONTAINS
    SUBROUTINE dom_vvl_init
       !!----------------------------------------------------------------------
       !!                ***  ROUTINE dom_vvl_init  ***
-      !!                   
+      !!
       !! ** Purpose :  Initialization of all scale factors, depths
       !!               and water column heights
       !!
@@ -116,10 +116,10 @@ CONTAINS
       !!
       !! ** Action  : - e3t_(n/b) and tilde_e3t_(n/b)
       !!              - Regrid: e3(u/v)_n
-      !!                        e3(u/v)_b       
-      !!                        e3w_n           
-      !!                        e3(u/v)w_b      
-      !!                        e3(u/v)w_n      
+      !!                        e3(u/v)_b
+      !!                        e3w_n
+      !!                        e3(u/v)w_b
+      !!                        e3(u/v)w_n
       !!                        gdept_n, gdepw_n and gde3w_n
       !!              - h(t/u/v)_0
       !!              - frq_rst_e3t and frq_rst_hdv
@@ -148,10 +148,10 @@ CONTAINS
       !                                ! Horizontal interpolation of e3t
       CALL dom_vvl_interpol( e3t_b(:,:,:), e3u_b(:,:,:), 'U' )    ! from T to U
       CALL dom_vvl_interpol( e3t_n(:,:,:), e3u_n(:,:,:), 'U' )
-      CALL dom_vvl_interpol( e3t_b(:,:,:), e3v_b(:,:,:), 'V' )    ! from T to V 
+      CALL dom_vvl_interpol( e3t_b(:,:,:), e3v_b(:,:,:), 'V' )    ! from T to V
       CALL dom_vvl_interpol( e3t_n(:,:,:), e3v_n(:,:,:), 'V' )
       CALL dom_vvl_interpol( e3u_n(:,:,:), e3f_n(:,:,:), 'F' )    ! from U to F
-      !                                ! Vertical interpolation of e3t,u,v 
+      !                                ! Vertical interpolation of e3t,u,v
       CALL dom_vvl_interpol( e3t_n(:,:,:), e3w_n (:,:,:), 'W'  )  ! from T to W
       CALL dom_vvl_interpol( e3t_b(:,:,:), e3w_b (:,:,:), 'W'  )
       CALL dom_vvl_interpol( e3u_n(:,:,:), e3uw_n(:,:,:), 'UW' )  ! from U to UW
@@ -175,16 +175,16 @@ CONTAINS
             DO ji = 1,jpi
                !    zcoef = tmask - wmask    ! 0 everywhere tmask = wmask, ie everywhere expect at jk = mikt
                !                             ! 1 everywhere from mbkt to mikt + 1 or 1 (if no isf)
-               !                             ! 0.5 where jk = mikt     
+               !                             ! 0.5 where jk = mikt
 !!gm ???????   BUG ?  gdept_n as well as gde3w_n  does not include the thickness of ISF ??
                zcoef = ( tmask(ji,jj,jk) - wmask(ji,jj,jk) )
                gdepw_n(ji,jj,jk) = gdepw_n(ji,jj,jk-1) + e3t_n(ji,jj,jk-1)
                gdept_n(ji,jj,jk) =      zcoef  * ( gdepw_n(ji,jj,jk  ) + 0.5 * e3w_n(ji,jj,jk))  &
-                  &                + (1-zcoef) * ( gdept_n(ji,jj,jk-1) +       e3w_n(ji,jj,jk)) 
+                  &                + (1-zcoef) * ( gdept_n(ji,jj,jk-1) +       e3w_n(ji,jj,jk))
                gde3w_n(ji,jj,jk) = gdept_n(ji,jj,jk) - sshn(ji,jj)
                gdepw_b(ji,jj,jk) = gdepw_b(ji,jj,jk-1) + e3t_b(ji,jj,jk-1)
                gdept_b(ji,jj,jk) =      zcoef  * ( gdepw_b(ji,jj,jk  ) + 0.5 * e3w_b(ji,jj,jk))  &
-                  &                + (1-zcoef) * ( gdept_b(ji,jj,jk-1) +       e3w_b(ji,jj,jk)) 
+                  &                + (1-zcoef) * ( gdept_b(ji,jj,jk-1) +       e3w_b(ji,jj,jk))
             END DO
          END DO
       END DO
@@ -246,8 +246,8 @@ CONTAINS
                END DO
             END DO
             IF( cn_cfg == "orca" .AND. nn_cfg == 3 ) THEN   ! ORCA2: Suppress ztilde in the Foxe Basin for ORCA2
-               ii0 = 103   ;   ii1 = 111       
-               ij0 = 128   ;   ij1 = 135   ;   
+               ii0 = 103   ;   ii1 = 111
+               ij0 = 128   ;   ij1 = 135   ;
                frq_rst_e3t( mi0(ii0):mi1(ii1) , mj0(ij0):mj1(ij1) ) =  0.0_wp
                frq_rst_hdv( mi0(ii0):mi1(ii1) , mj0(ij0):mj1(ij1) ) =  1.e0_wp / rdt
             ENDIF
@@ -264,7 +264,7 @@ CONTAINS
             CALL iom_set_rstw_var_active('tilde_e3t_b')
             CALL iom_set_rstw_var_active('tilde_e3t_n')
          END IF
-         !                                           ! -------------!    
+         !                                           ! -------------!
          IF( ln_vvl_ztilde ) THEN                    ! z_tilde case !
             !                                        ! ------------ !
             CALL iom_set_rstw_var_active('hdiv_lf')
@@ -275,15 +275,15 @@ CONTAINS
    END SUBROUTINE dom_vvl_init
 
 
-   SUBROUTINE dom_vvl_sf_nxt( kt, kcall ) 
+   SUBROUTINE dom_vvl_sf_nxt( kt, kcall )
       !!----------------------------------------------------------------------
       !!                ***  ROUTINE dom_vvl_sf_nxt  ***
-      !!                   
+      !!
       !! ** Purpose :  - compute the after scale factors used in tra_zdf, dynnxt,
       !!                 tranxt and dynspg routines
       !!
       !! ** Method  :  - z_star case:  Repartition of ssh INCREMENT proportionnaly to the level thickness.
-      !!               - z_tilde_case: after scale factor increment = 
+      !!               - z_tilde_case: after scale factor increment =
       !!                                    high frequency part of horizontal divergence
       !!                                  + retsoring towards the background grid
       !!                                  + thickness difusion
@@ -291,7 +291,7 @@ CONTAINS
       !!                               to the "baroclinic" level thickness.
       !!
       !! ** Action  :  - hdiv_lf    : restoring towards full baroclinic divergence in z_tilde case
-      !!               - tilde_e3t_a: after increment of vertical scale factor 
+      !!               - tilde_e3t_a: after increment of vertical scale factor
       !!                              in z_tilde case
       !!               - e3(t/u/v)_a
       !!
@@ -395,7 +395,7 @@ CONTAINS
                DO ji = 1, jpim1   ! vector opt.
                   un_td(ji,jj,jk) = rn_ahe3 * umask(ji,jj,jk) * e2_e1u(ji,jj)           &
                      &            * ( tilde_e3t_b(ji,jj,jk) - tilde_e3t_b(ji+1,jj  ,jk) )
-                  vn_td(ji,jj,jk) = rn_ahe3 * vmask(ji,jj,jk) * e1_e2v(ji,jj)           & 
+                  vn_td(ji,jj,jk) = rn_ahe3 * vmask(ji,jj,jk) * e1_e2v(ji,jj)           &
                      &            * ( tilde_e3t_b(ji,jj,jk) - tilde_e3t_b(ji  ,jj+1,jk) )
                   zwu(ji,jj) = zwu(ji,jj) + un_td(ji,jj,jk)
                   zwv(ji,jj) = zwv(ji,jj) + vn_td(ji,jj,jk)
@@ -460,7 +460,7 @@ CONTAINS
                WRITE(numout, *) 'MAX( tilde_e3t_a(:,:,:) / e3t_0(:,:,:) ) =', z_tmax
                WRITE(numout, *) 'at i, j, k=', ijk_max
                WRITE(numout, *) 'MIN( tilde_e3t_a(:,:,:) / e3t_0(:,:,:) ) =', z_tmin
-               WRITE(numout, *) 'at i, j, k=', ijk_min            
+               WRITE(numout, *) 'at i, j, k=', ijk_min
                CALL ctl_warn('MAX( ABS( tilde_e3t_a(:,:,:) ) / e3t_0(:,:,:) ) too high')
             ENDIF
          ENDIF
@@ -575,8 +575,8 @@ CONTAINS
    SUBROUTINE dom_vvl_sf_swp( kt )
       !!----------------------------------------------------------------------
       !!                ***  ROUTINE dom_vvl_sf_swp  ***
-      !!                   
-      !! ** Purpose :  compute time filter and swap of scale factors 
+      !!
+      !! ** Purpose :  compute time filter and swap of scale factors
       !!               compute all depths and related variables for next time step
       !!               write outputs and restart file
       !!
@@ -586,10 +586,10 @@ CONTAINS
       !!
       !! ** Action  :  - e3t_(b/n), tilde_e3t_(b/n) and e3(u/v)_n ready for next time step
       !!               - Recompute:
-      !!                    e3(u/v)_b       
-      !!                    e3w_n           
-      !!                    e3(u/v)w_b      
-      !!                    e3(u/v)w_n      
+      !!                    e3(u/v)_b
+      !!                    e3w_n
+      !!                    e3(u/v)w_b
+      !!                    e3(u/v)w_n
       !!                    gdept_n, gdepw_n  and gde3w_n
       !!                    h(u/v) and h(u/v)r
       !!
@@ -619,7 +619,7 @@ CONTAINS
          IF( neuler == 0 .AND. kt == nit000 ) THEN
             tilde_e3t_b(:,:,:) = tilde_e3t_n(:,:,:)
          ELSE
-            tilde_e3t_b(:,:,:) = tilde_e3t_n(:,:,:) & 
+            tilde_e3t_b(:,:,:) = tilde_e3t_n(:,:,:) &
             &         + atfp * ( tilde_e3t_b(:,:,:) - 2.0_wp * tilde_e3t_n(:,:,:) + tilde_e3t_a(:,:,:) )
          ENDIF
          tilde_e3t_n(:,:,:) = tilde_e3t_a(:,:,:)
@@ -637,9 +637,9 @@ CONTAINS
       ! --------------------------------------
       ! - ML - e3u_b and e3v_b are allready computed in dynnxt
       ! - JC - hu_b, hv_b, hur_b, hvr_b also
-      
+
       CALL dom_vvl_interpol( e3u_n(:,:,:), e3f_n(:,:,:), 'F'  )
-      
+
       ! Vertical scale factor interpolations
       CALL dom_vvl_interpol( e3t_n(:,:,:),  e3w_n(:,:,:), 'W'  )
       CALL dom_vvl_interpol( e3u_n(:,:,:), e3uw_n(:,:,:), 'UW' )
@@ -660,7 +660,7 @@ CONTAINS
                zcoef = (tmask(ji,jj,jk) - wmask(ji,jj,jk))
                gdepw_n(ji,jj,jk) = gdepw_n(ji,jj,jk-1) + e3t_n(ji,jj,jk-1)
                gdept_n(ji,jj,jk) =    zcoef  * ( gdepw_n(ji,jj,jk  ) + 0.5 * e3w_n(ji,jj,jk) )  &
-                   &             + (1-zcoef) * ( gdept_n(ji,jj,jk-1) +       e3w_n(ji,jj,jk) ) 
+                   &             + (1-zcoef) * ( gdept_n(ji,jj,jk-1) +       e3w_n(ji,jj,jk) )
                gde3w_n(ji,jj,jk) = gdept_n(ji,jj,jk) - sshn(ji,jj)
             END DO
          END DO
@@ -795,7 +795,7 @@ CONTAINS
    SUBROUTINE dom_vvl_rst( kt, cdrw )
       !!---------------------------------------------------------------------
       !!                   ***  ROUTINE dom_vvl_rst  ***
-      !!                     
+      !!
       !! ** Purpose :   Read or write VVL file in restart file
       !!
       !! ** Method  :   use of IOM library
@@ -811,7 +811,7 @@ CONTAINS
       INTEGER ::   id1, id2, id3, id4, id5     ! local integers
       !!----------------------------------------------------------------------
       !
-      IF( TRIM(cdrw) == 'READ' ) THEN        ! Read/initialise 
+      IF( TRIM(cdrw) == 'READ' ) THEN        ! Read/initialise
          !                                   ! ===============
          IF( ln_rstart ) THEN                   !* Read the restart file
             CALL rst_read_open                  !  open the restart file if necessary
@@ -828,9 +828,9 @@ CONTAINS
             IF( MIN( id1, id2 ) > 0 ) THEN       ! all required arrays exist
                CALL iom_get( numror, jpdom_autoglo, 'e3t_b', e3t_b(:,:,:), ldxios = lrxios )
                CALL iom_get( numror, jpdom_autoglo, 'e3t_n', e3t_n(:,:,:), ldxios = lrxios )
-               ! needed to restart if land processor not computed 
+               ! needed to restart if land processor not computed
                IF(lwp) write(numout,*) 'dom_vvl_rst : e3t_b and e3t_n found in restart files'
-               WHERE ( tmask(:,:,:) == 0.0_wp ) 
+               WHERE ( tmask(:,:,:) == 0.0_wp )
                   e3t_n(:,:,:) = e3t_0(:,:,:)
                   e3t_b(:,:,:) = e3t_0(:,:,:)
                END WHERE
@@ -893,7 +893,7 @@ CONTAINS
          ELSE                                   !* Initialize at "rest"
             !
 
-            IF( ll_wd ) THEN   ! MJB ll_wd edits start here - these are essential 
+            IF( ll_wd ) THEN   ! MJB ll_wd edits start here - these are essential
                !
                IF( cn_cfg == 'wad' ) THEN
                   ! Wetting and drying test case
@@ -932,8 +932,8 @@ CONTAINS
                      IF ( ht_0(ji,jj) .LE. 0.0 .AND. NINT( ssmask(ji,jj) ) .EQ. 1) THEN
                        CALL ctl_stop( 'dom_vvl_rst: ht_0 must be positive at potentially wet points' )
                      ENDIF
-                  END DO 
-               END DO 
+                  END DO
+               END DO
                !
             ELSE
                !
@@ -974,7 +974,7 @@ CONTAINS
             CALL iom_rstput( kt, nitrst, numrow, 'tilde_e3t_b', tilde_e3t_b(:,:,:), ldxios = lwxios)
             CALL iom_rstput( kt, nitrst, numrow, 'tilde_e3t_n', tilde_e3t_n(:,:,:), ldxios = lwxios)
          END IF
-         !                                           ! -------------!    
+         !                                           ! -------------!
          IF( ln_vvl_ztilde ) THEN                    ! z_tilde case !
             !                                        ! ------------ !
             CALL iom_rstput( kt, nitrst, numrow, 'hdiv_lf', hdiv_lf(:,:,:), ldxios = lwxios)
@@ -989,7 +989,7 @@ CONTAINS
    SUBROUTINE dom_vvl_ctl
       !!---------------------------------------------------------------------
       !!                  ***  ROUTINE dom_vvl_ctl  ***
-      !!                
+      !!
       !! ** Purpose :   Control the consistency between namelist options
       !!                for vertical coordinate
       !!----------------------------------------------------------------------
@@ -998,9 +998,9 @@ CONTAINS
       NAMELIST/nam_vvl/ ln_vvl_zstar, ln_vvl_ztilde, ln_vvl_layer, ln_vvl_ztilde_as_zstar, &
          &              ln_vvl_zstar_at_eqtor      , rn_ahe3     , rn_rst_e3t            , &
          &              rn_lf_cutoff               , rn_zdef_max , ln_vvl_dbg                ! not yet implemented: ln_vvl_kepe
-      !!---------------------------------------------------------------------- 
+      !!----------------------------------------------------------------------
       !
-      REWIND( numnam_ref )              ! Namelist nam_vvl in reference namelist : 
+      REWIND( numnam_ref )              ! Namelist nam_vvl in reference namelist :
       READ  ( numnam_ref, nam_vvl, IOSTAT = ios, ERR = 901)
 901   IF( ios /= 0 )   CALL ctl_nam ( ios , 'nam_vvl in reference namelist', lwp )
       REWIND( numnam_cfg )              ! Namelist nam_vvl in configuration namelist : Parameters of the run

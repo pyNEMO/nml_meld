@@ -52,12 +52,12 @@ MODULE dyndmp
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: dyndmp.F90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: dyndmp.F90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
 CONTAINS
@@ -77,8 +77,8 @@ CONTAINS
    SUBROUTINE dyn_dmp_init
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE dyn_dmp_init  ***
-      !! 
-      !! ** Purpose :   Initialization for the Newtonian damping 
+      !!
+      !! ** Purpose :   Initialization for the Newtonian damping
       !!
       !! ** Method  : - read the ln_dyndmp parameter from the namc1d_dyndmp namelist
       !!              - allocate damping arrays
@@ -90,7 +90,7 @@ CONTAINS
       NAMELIST/namc1d_dyndmp/ ln_dyndmp
       !!----------------------------------------------------------------------
       !
-      REWIND( numnam_ref )              ! Namelist namc1d_dyndmp in reference namelist : 
+      REWIND( numnam_ref )              ! Namelist namc1d_dyndmp in reference namelist :
       READ  ( numnam_ref, namc1d_dyndmp, IOSTAT = ios, ERR = 901)
 901   IF( ios /= 0 )   CALL ctl_nam ( ios , 'namc1d_dyndmp in reference namelist', lwp )
       REWIND( numnam_cfg )              ! Namelist namc1d_dyndmp in configuration namelist : Parameters of the run
@@ -144,12 +144,12 @@ CONTAINS
    SUBROUTINE dyn_dmp( kt )
       !!----------------------------------------------------------------------
       !!                   ***  ROUTINE dyn_dmp  ***
-      !!                  
+      !!
       !! ** Purpose :   Compute the momentum trends due to a newtonian damping
-      !!      of the ocean velocities towards the given data and add it to the 
+      !!      of the ocean velocities towards the given data and add it to the
       !!      general momentum trends.
       !!
-      !! ** Method  :   Compute Newtonian damping towards u_dta and v_dta 
+      !! ** Method  :   Compute Newtonian damping towards u_dta and v_dta
       !!      and add to the general momentum trends:
       !!                     ua = ua + resto_uv * (u_dta - ub)
       !!                     va = va + resto_uv * (v_dta - vb)
@@ -163,7 +163,7 @@ CONTAINS
       !!
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
       REAL(wp) ::   zua, zva     ! local scalars
-      REAL(wp), DIMENSION(jpi,jpj,jpk,2) ::   zuv_dta   ! Read in data 
+      REAL(wp), DIMENSION(jpi,jpj,jpk,2) ::   zuv_dta   ! Read in data
       !!----------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start( 'dyn_dmp' )
@@ -184,7 +184,7 @@ CONTAINS
                   ua(ji,jj,jk) = ua(ji,jj,jk) + zua
                   va(ji,jj,jk) = va(ji,jj,jk) + zva
                   utrdmp(ji,jj,jk) = zua           ! save the trends
-                  vtrdmp(ji,jj,jk) = zva      
+                  vtrdmp(ji,jj,jk) = zva
                END DO
             END DO
          END DO
@@ -198,7 +198,7 @@ CONTAINS
                      zva = resto_uv(ji,jj,jk) * ( zuv_dta(ji,jj,jk,2) - vb(ji,jj,jk) )
                   ELSE
                      zua = 0._wp
-                     zva = 0._wp  
+                     zva = 0._wp
                   ENDIF
                   ua(ji,jj,jk) = ua(ji,jj,jk) + zua
                   va(ji,jj,jk) = va(ji,jj,jk) + zva
@@ -217,7 +217,7 @@ CONTAINS
                      zva = resto_uv(ji,jj,jk) * ( zuv_dta(ji,jj,jk,2) - vb(ji,jj,jk) )
                   ELSE
                      zua = 0._wp
-                     zva = 0._wp  
+                     zva = 0._wp
                   ENDIF
                   ua(ji,jj,jk) = ua(ji,jj,jk) + zua
                   va(ji,jj,jk) = va(ji,jj,jk) + zva

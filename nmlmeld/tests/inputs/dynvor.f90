@@ -16,7 +16,7 @@ MODULE dynvor
    !!            2.0  ! 2006-11  (G. Madec)  flux form advection: add metric term
    !!            3.2  ! 2009-04  (R. Benshila)  vvl: correction of een scheme
    !!            3.3  ! 2010-10  (C. Ethe, G. Madec)  reorganisation of initialisation phase
-   !!            3.7  ! 2014-04  (G. Madec)  trend simplification: suppress jpdyn_trd_dat vorticity 
+   !!            3.7  ! 2014-04  (G. Madec)  trend simplification: suppress jpdyn_trd_dat vorticity
    !!             -   ! 2014-06  (G. Madec)  suppression of velocity curl from in-core memory
    !!             -   ! 2016-12  (G. Madec, E. Clementi) add Stokes-Coriolis trends (ln_stcor=T)
    !!            4.0  ! 2017-07  (G. Madec)  linear dynamics + trends diag. with Stokes-Coriolis
@@ -71,7 +71,7 @@ MODULE dynvor
    INTEGER, PUBLIC, PARAMETER ::   np_EEN = 4   ! EEN scheme
    INTEGER, PUBLIC, PARAMETER ::   np_MIX = 5   ! MIX scheme
 
-   INTEGER ::   ncor, nrvm, ntot   ! choice of calculated vorticity 
+   INTEGER ::   ncor, nrvm, ntot   ! choice of calculated vorticity
    !                               ! associated indices:
    INTEGER, PUBLIC, PARAMETER ::   np_COR = 1         ! Coriolis (planetary)
    INTEGER, PUBLIC, PARAMETER ::   np_RVO = 2         ! relative vorticity
@@ -80,14 +80,14 @@ MODULE dynvor
    INTEGER, PUBLIC, PARAMETER ::   np_CME = 5         ! Coriolis + metric term
 
    REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   di_e2u_2        ! = di(e2u)/2          used in T-point metric term calculation
-   REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   dj_e1v_2        ! = dj(e1v)/2           -        -      -       - 
+   REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   dj_e1v_2        ! = dj(e1v)/2           -        -      -       -
    REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   di_e2v_2e1e2f   ! = di(e2u)/(2*e1e2f)  used in F-point metric term calculation
-   REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   dj_e1u_2e1e2f   ! = dj(e1v)/(2*e1e2f)   -        -      -       - 
-   
+   REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   dj_e1u_2e1e2f   ! = dj(e1v)/(2*e1e2f)   -        -      -       -
+
    REAL(wp) ::   r1_4  = 0.250_wp         ! =1/4
    REAL(wp) ::   r1_8  = 0.125_wp         ! =1/8
    REAL(wp) ::   r1_12 = 1._wp / 12._wp   ! 1/12
-   
+
    !! * Substitutions
    !!----------------------------------------------------------------------
    !!                   ***  vectopt_loop_substitute  ***
@@ -97,7 +97,7 @@ MODULE dynvor
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
@@ -114,7 +114,7 @@ CONTAINS
       !!
       !! ** Action : - Update (ua,va) with the now vorticity term trend
       !!             - save the trends in (ztrdu,ztrdv) in 2 parts (relative
-      !!               and planetary vorticity trends) and send them to trd_dyn 
+      !!               and planetary vorticity trends) and send them to trd_dyn
       !!               for futher diagnostics (l_trddyn=T)
       !!----------------------------------------------------------------------
       INTEGER, INTENT( in ) ::   kt   ! ocean time-step index
@@ -202,13 +202,13 @@ CONTAINS
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE vor_enT  ***
       !!
-      !! ** Purpose :   Compute the now total vorticity trend and add it to 
+      !! ** Purpose :   Compute the now total vorticity trend and add it to
       !!      the general trend of the momentum equation.
       !!
-      !! ** Method  :   Trend evaluated using now fields (centered in time) 
+      !! ** Method  :   Trend evaluated using now fields (centered in time)
       !!       and t-point evaluation of vorticity (planetary and relative).
       !!       conserves the horizontal kinetic energy.
-      !!         The general trend of momentum is increased due to the vorticity 
+      !!         The general trend of momentum is increased due to the vorticity
       !!       term which is given by:
       !!          voru = 1/bu  mj[ ( mi(mj(bf*rvor))+bt*f_t)/e3t  mj[vn] ]
       !!          vorv = 1/bv  mi[ ( mi(mj(bf*rvor))+bt*f_t)/e3f  mj[un] ]
@@ -246,7 +246,7 @@ CONTAINS
                      &          - e1u(ji,jj+1) * pu(ji,jj+1,jk) + e1u(ji,jj) * pu(ji,jj,jk)  ) * r1_e1e2f(ji,jj)
                END DO
             END DO
-            IF( ln_dynvor_msk ) THEN                     ! mask/unmask relative vorticity 
+            IF( ln_dynvor_msk ) THEN                     ! mask/unmask relative vorticity
                DO jj = 1, jpjm1
                   DO ji = 1, jpim1
                      zwz(ji,jj) = zwz(ji,jj) * fmask(ji,jj,jk)
@@ -274,7 +274,7 @@ CONTAINS
                      &           - e1u(ji,jj+1) * pu(ji,jj+1,jk) + e1u(ji,jj) * pu(ji,jj,jk)   ) * r1_e1e2f(ji,jj)
                END DO
             END DO
-            IF( ln_dynvor_msk ) THEN                     ! mask/unmask relative vorticity 
+            IF( ln_dynvor_msk ) THEN                     ! mask/unmask relative vorticity
                DO jj = 1, jpjm1
                   DO ji = 1, jpim1
                      zwz(ji,jj) = zwz(ji,jj) * fmask(ji,jj,jk)
@@ -308,10 +308,10 @@ CONTAINS
                   &                                   + zwt(ji  ,jj) * ( pv(ji  ,jj,jk) + pv(ji  ,jj-1,jk) )   )
                   !
                pv_rhs(ji,jj,jk) = pv_rhs(ji,jj,jk) - r1_4 * r1_e1e2v(ji,jj) / e3v_n(ji,jj,jk)                    &
-                  &                                * (  zwt(ji,jj+1) * ( pu(ji,jj+1,jk) + pu(ji-1,jj+1,jk) )   & 
-                  &                                   + zwt(ji,jj  ) * ( pu(ji,jj  ,jk) + pu(ji-1,jj  ,jk) )   ) 
-            END DO  
-         END DO  
+                  &                                * (  zwt(ji,jj+1) * ( pu(ji,jj+1,jk) + pu(ji-1,jj+1,jk) )   &
+                  &                                   + zwt(ji,jj  ) * ( pu(ji,jj  ,jk) + pu(ji-1,jj  ,jk) )   )
+            END DO
+         END DO
          !                                             ! ===============
       END DO                                           !   End of slab
       !                                                ! ===============
@@ -322,13 +322,13 @@ CONTAINS
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE vor_ene  ***
       !!
-      !! ** Purpose :   Compute the now total vorticity trend and add it to 
+      !! ** Purpose :   Compute the now total vorticity trend and add it to
       !!      the general trend of the momentum equation.
       !!
-      !! ** Method  :   Trend evaluated using now fields (centered in time) 
+      !! ** Method  :   Trend evaluated using now fields (centered in time)
       !!       and the Sadourny (1975) flux form formulation : conserves the
       !!       horizontal kinetic energy.
-      !!         The general trend of momentum is increased due to the vorticity 
+      !!         The general trend of momentum is increased due to the vorticity
       !!       term which is given by:
       !!          voru = 1/e1u  mj-1[ (rvor+f)/e3f  mi(e1v*e3v vn) ]
       !!          vorv = 1/e2v  mi-1[ (rvor+f)/e3f  mj(e2u*e3u un) ]
@@ -360,7 +360,7 @@ CONTAINS
          !
          SELECT CASE( kvor )                 !==  vorticity considered  ==!
          CASE ( np_COR )                           !* Coriolis (planetary vorticity)
-            zwz(:,:) = ff_f(:,:) 
+            zwz(:,:) = ff_f(:,:)
          CASE ( np_RVO )                           !* relative vorticity
             DO jj = 1, jpjm1
                DO ji = 1, jpim1   ! vector opt.
@@ -417,9 +417,9 @@ CONTAINS
                zx1 = zwx(ji-1,jj) + zwx(ji-1,jj+1)
                zx2 = zwx(ji  ,jj) + zwx(ji  ,jj+1)
                pua(ji,jj,jk) = pua(ji,jj,jk) + r1_4 * r1_e1u(ji,jj) * ( zwz(ji  ,jj-1) * zy1 + zwz(ji,jj) * zy2 )
-               pva(ji,jj,jk) = pva(ji,jj,jk) - r1_4 * r1_e2v(ji,jj) * ( zwz(ji-1,jj  ) * zx1 + zwz(ji,jj) * zx2 ) 
-            END DO  
-         END DO  
+               pva(ji,jj,jk) = pva(ji,jj,jk) - r1_4 * r1_e2v(ji,jj) * ( zwz(ji-1,jj  ) * zx1 + zwz(ji,jj) * zx2 )
+            END DO
+         END DO
          !                                             ! ===============
       END DO                                           !   End of slab
       !                                                ! ===============
@@ -467,7 +467,7 @@ CONTAINS
          !
          SELECT CASE( kvor )                 !==  vorticity considered  ==!
          CASE ( np_COR )                           !* Coriolis (planetary vorticity)
-            zwz(:,:) = ff_f(:,:) 
+            zwz(:,:) = ff_f(:,:)
          CASE ( np_RVO )                           !* relative vorticity
             DO jj = 1, jpjm1
                DO ji = 1, jpim1   ! vector opt.
@@ -525,8 +525,8 @@ CONTAINS
                   &                           + zwx(ji  ,jj  ) + zwx(ji  ,jj+1)  )
                pua(ji,jj,jk) = pua(ji,jj,jk) + zuav * ( zwz(ji  ,jj-1) + zwz(ji,jj) )
                pva(ji,jj,jk) = pva(ji,jj,jk) + zvau * ( zwz(ji-1,jj  ) + zwz(ji,jj) )
-            END DO  
-         END DO  
+            END DO
+         END DO
          !                                             ! ===============
       END DO                                           !   End of slab
       !                                                ! ===============
@@ -537,11 +537,11 @@ CONTAINS
       !!----------------------------------------------------------------------
       !!                ***  ROUTINE vor_een  ***
       !!
-      !! ** Purpose :   Compute the now total vorticity trend and add it to 
+      !! ** Purpose :   Compute the now total vorticity trend and add it to
       !!      the general trend of the momentum equation.
       !!
-      !! ** Method  :   Trend evaluated using now fields (centered in time) 
-      !!      and the Arakawa and Lamb (1980) flux form formulation : conserves 
+      !! ** Method  :   Trend evaluated using now fields (centered in time)
+      !!      and the Arakawa and Lamb (1980) flux form formulation : conserves
       !!      both the horizontal kinetic energy and the potential enstrophy
       !!      when horizontal divergence is zero (see the NEMO documentation)
       !!      Add this trend to the general momentum trend (ua,va).
@@ -677,8 +677,8 @@ CONTAINS
                   &                             + ztnw(ji,jj  ) * zwx(ji-1,jj  ) + ztne(ji,jj  ) * zwx(ji  ,jj  ) )
                pua(ji,jj,jk) = pua(ji,jj,jk) + zua
                pva(ji,jj,jk) = pva(ji,jj,jk) + zva
-            END DO  
-         END DO  
+            END DO
+         END DO
          !                                             ! ===============
       END DO                                           !   End of slab
       !                                                ! ===============
@@ -690,13 +690,13 @@ CONTAINS
       !!----------------------------------------------------------------------
       !!                ***  ROUTINE vor_eeT  ***
       !!
-      !! ** Purpose :   Compute the now total vorticity trend and add it to 
+      !! ** Purpose :   Compute the now total vorticity trend and add it to
       !!      the general trend of the momentum equation.
       !!
-      !! ** Method  :   Trend evaluated using now fields (centered in time) 
-      !!      and the Arakawa and Lamb (1980) vector form formulation using 
+      !! ** Method  :   Trend evaluated using now fields (centered in time)
+      !!      and the Arakawa and Lamb (1980) vector form formulation using
       !!      a modified version of Arakawa and Lamb (1980) scheme (see vor_een).
-      !!      The change consists in 
+      !!      The change consists in
       !!      Add this trend to the general momentum trend (ua,va).
       !!
       !! ** Action : - Update (ua,va) with the now vorticity term trend
@@ -809,8 +809,8 @@ CONTAINS
                   &                             + ztnw(ji,jj  ) * zwx(ji-1,jj  ) + ztne(ji,jj  ) * zwx(ji  ,jj  ) )
                pua(ji,jj,jk) = pua(ji,jj,jk) + zua
                pva(ji,jj,jk) = pva(ji,jj,jk) + zva
-            END DO  
-         END DO  
+            END DO
+         END DO
          !                                             ! ===============
       END DO                                           !   End of slab
       !                                                ! ===============
@@ -888,7 +888,7 @@ CONTAINS
       IF( ln_dynvor_mix ) THEN   ;   ioptio = ioptio + 1   ;   nvor_scheme = np_MIX   ;   ENDIF
       !
       IF( ioptio /= 1 ) CALL ctl_stop( ' use ONE and ONLY one vorticity scheme' )
-      !                      
+      !
       IF(lwp) WRITE(numout,*)        ! type of calculated vorticity (set ncor, nrvm, ntot)
       ncor = np_COR                       ! planetary vorticity
       SELECT CASE( n_dynadv )
@@ -897,9 +897,9 @@ CONTAINS
          nrvm = np_COR        ! planetary vorticity
          ntot = np_COR        !     -         -
       CASE( np_VEC_c2  )
-         IF(lwp) WRITE(numout,*) '   ==>>>   vector form dynamics : total vorticity = Coriolis + relative vorticity' 
+         IF(lwp) WRITE(numout,*) '   ==>>>   vector form dynamics : total vorticity = Coriolis + relative vorticity'
          nrvm = np_RVO        ! relative vorticity
-         ntot = np_CRV        ! relative + planetary vorticity         
+         ntot = np_CRV        ! relative + planetary vorticity
       CASE( np_FLX_c2 , np_FLX_ubs  )
          IF(lwp) WRITE(numout,*) '   ==>>>   flux form dynamics : total vorticity = Coriolis + metric term'
          nrvm = np_MET        ! metric term
@@ -928,7 +928,7 @@ CONTAINS
          END SELECT
          !
       END SELECT
-      
+
       IF(lwp) THEN                   ! Print the choice
          WRITE(numout,*)
          SELECT CASE( nvor_scheme )
@@ -938,7 +938,7 @@ CONTAINS
          CASE( np_EET )   ;   WRITE(numout,*) '   ==>>>   energy conserving scheme (EEN scheme using e3t) (EET)'
          CASE( np_EEN )   ;   WRITE(numout,*) '   ==>>>   energy and enstrophy conserving scheme (EEN)'
          CASE( np_MIX )   ;   WRITE(numout,*) '   ==>>>   mixed enstrophy/energy conserving scheme (MIX)'
-         END SELECT         
+         END SELECT
       ENDIF
       !
    END SUBROUTINE dyn_vor_init

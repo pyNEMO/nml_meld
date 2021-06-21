@@ -10,7 +10,7 @@ MODULE dynspg
    !!----------------------------------------------------------------------
 
    !!----------------------------------------------------------------------
-   !!   dyn_spg     : update the dynamics trend with surface pressure gradient 
+   !!   dyn_spg     : update the dynamics trend with surface pressure gradient
    !!   dyn_spg_init: initialization, namelist read, and parameters control
    !!----------------------------------------------------------------------
    USE oce            ! ocean dynamics and tracers variables
@@ -22,8 +22,8 @@ MODULE dynspg
    USE sbcapr         ! surface boundary condition: atmospheric pressure
    USE dynspg_exp     ! surface pressure gradient     (dyn_spg_exp routine)
    USE dynspg_ts      ! surface pressure gradient     (dyn_spg_ts  routine)
-   USE sbctide        ! 
-   USE updtide        ! 
+   USE sbctide        !
+   USE updtide        !
    USE trd_oce        ! trends: ocean variables
    USE trddyn         ! trend manager: dynamics
    !
@@ -38,7 +38,7 @@ MODULE dynspg
    PUBLIC   dyn_spg        ! routine called by step module
    PUBLIC   dyn_spg_init   ! routine called by opa module
 
-   INTEGER ::   nspg = 0   ! type of surface pressure gradient scheme defined from lk_dynspg_... 
+   INTEGER ::   nspg = 0   ! type of surface pressure gradient scheme defined from lk_dynspg_...
 
    !                       ! Parameter to control the surface pressure gradient scheme
    INTEGER, PARAMETER ::   np_TS  = 1   ! split-explicit time stepping (Time-Splitting)
@@ -54,12 +54,12 @@ MODULE dynspg
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: vectopt_loop_substitute.h90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
-   !! $Id: dynspg.F90 10068 2018-08-28 14:09:04Z nicolasmartin $ 
+   !! $Id: dynspg.F90 10068 2018-08-28 14:09:04Z nicolasmartin $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
 CONTAINS
@@ -68,14 +68,14 @@ CONTAINS
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE dyn_spg  ***
       !!
-      !! ** Purpose :   compute surface pressure gradient including the 
+      !! ** Purpose :   compute surface pressure gradient including the
       !!              atmospheric pressure forcing (ln_apr_dyn=T).
       !!
       !! ** Method  :   Two schemes:
       !!              - explicit       : the spg is evaluated at now
       !!              - split-explicit : a time splitting technique is used
       !!
-      !!              ln_apr_dyn=T : the atmospheric pressure forcing is applied 
+      !!              ln_apr_dyn=T : the atmospheric pressure forcing is applied
       !!             as the gradient of the inverse barometer ssh:
       !!                apgu = - 1/rau0 di[apr] = 0.5*grav di[ssh_ib+ssh_ibb]
       !!                apgv = - 1/rau0 dj[apr] = 0.5*grav dj[ssh_ib+ssh_ibb]
@@ -93,7 +93,7 @@ CONTAINS
       IF( ln_timing )   CALL timing_start('dyn_spg')
       !
       IF( l_trddyn )   THEN                      ! temporary save of ta and sa trends
-         ALLOCATE( ztrdu(jpi,jpj,jpk) , ztrdv(jpi,jpj,jpk) ) 
+         ALLOCATE( ztrdu(jpi,jpj,jpk) , ztrdv(jpi,jpj,jpk) )
          ztrdu(:,:,:) = ua(:,:,:)
          ztrdv(:,:,:) = va(:,:,:)
       ENDIF
@@ -107,7 +107,7 @@ CONTAINS
                spgu(ji,jj) = 0._wp
                spgv(ji,jj) = 0._wp
             END DO
-         END DO         
+         END DO
          !
          IF( ln_apr_dyn .AND. .NOT.ln_dynspg_ts ) THEN   !==  Atmospheric pressure gradient (added later in time-split case) ==!
             zg_2 = grav * 0.5
@@ -130,7 +130,7 @@ CONTAINS
                DO ji = 2, jpim1   ! vector opt.
                   spgu(ji,jj) = spgu(ji,jj) + grav * ( pot_astro(ji+1,jj) - pot_astro(ji,jj) ) * r1_e1u(ji,jj)
                   spgv(ji,jj) = spgv(ji,jj) + grav * ( pot_astro(ji,jj+1) - pot_astro(ji,jj) ) * r1_e2v(ji,jj)
-               END DO 
+               END DO
             END DO
             !
             IF (ln_scal_load) THEN
@@ -139,7 +139,7 @@ CONTAINS
                   DO ji = 2, jpim1   ! vector opt.
                      spgu(ji,jj) = spgu(ji,jj) + zld * ( sshn(ji+1,jj) - sshn(ji,jj) ) * r1_e1u(ji,jj)
                      spgv(ji,jj) = spgv(ji,jj) + zld * ( sshn(ji,jj+1) - sshn(ji,jj) ) * r1_e2v(ji,jj)
-                  END DO 
+                  END DO
                END DO
             ENDIF
          ENDIF
@@ -155,7 +155,7 @@ CONTAINS
                   spgv(ji,jj) = spgv(ji,jj) + ( zpice(ji,jj+1) - zpice(ji,jj) ) * r1_e2v(ji,jj)
                END DO
             END DO
-            DEALLOCATE( zpice )         
+            DEALLOCATE( zpice )
          ENDIF
          !
          DO jk = 1, jpkm1                    !== Add all terms to the general trend
@@ -165,22 +165,22 @@ CONTAINS
                   va(ji,jj,jk) = va(ji,jj,jk) + spgv(ji,jj)
                END DO
             END DO
-         END DO    
+         END DO
          !
 !!gm add here a call to dyn_trd for ice pressure gradient, the surf pressure trends ????
-         !    
+         !
       ENDIF
       !
       SELECT CASE ( nspg )                   !== surface pressure gradient computed and add to the general trend ==!
       CASE ( np_EXP )   ;   CALL dyn_spg_exp( kt )              ! explicit
       CASE ( np_TS  )   ;   CALL dyn_spg_ts ( kt )              ! time-splitting
       END SELECT
-      !                    
+      !
       IF( l_trddyn )   THEN                  ! save the surface pressure gradient trends for further diagnostics
          ztrdu(:,:,:) = ua(:,:,:) - ztrdu(:,:,:)
          ztrdv(:,:,:) = va(:,:,:) - ztrdv(:,:,:)
          CALL trd_dyn( ztrdu, ztrdv, jpdyn_spg, kt )
-         DEALLOCATE( ztrdu , ztrdv ) 
+         DEALLOCATE( ztrdu , ztrdv )
       ENDIF
       !                                      ! print mean trends (used for debugging)
       IF(ln_ctl)   CALL prt_ctl( tab3d_1=ua, clinfo1=' spg  - Ua: ', mask1=umask, &
@@ -194,8 +194,8 @@ CONTAINS
    SUBROUTINE dyn_spg_init
       !!---------------------------------------------------------------------
       !!                  ***  ROUTINE dyn_spg_init  ***
-      !!                
-      !! ** Purpose :   Control the consistency between namelist options for 
+      !!
+      !! ** Purpose :   Control the consistency between namelist options for
       !!              surface pressure gradient schemes
       !!----------------------------------------------------------------------
       INTEGER ::   ioptio, ios   ! local integers
