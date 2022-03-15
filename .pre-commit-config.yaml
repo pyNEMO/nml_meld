@@ -38,7 +38,7 @@ repos:
       - id: mypy
         exclude: docs
         additional_dependencies: ["xarray", "types-pkg_resources"]
-        
+
   - repo: https://github.com/PyCQA/doc8
     rev: 0.10.1
     hooks:
