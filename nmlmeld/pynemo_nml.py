@@ -43,7 +43,6 @@ sip.setapi("QString", 2)
 
 
 def compare(nlist_1, nlist_2, gui):
-
     if gui:
         app = QApplication(sys.argv)
         print(nlist_1)  # TODO: At the moment nlist_1 is hard coded for a directory scan
@@ -64,7 +63,6 @@ def compare(nlist_1, nlist_2, gui):
 
 class TestDialog(QDialog):
     def __init__(self, nlist_0, nlist_1):
-
         super(TestDialog, self).__init__()
 
         self.emsg = QErrorMessage(self)
@@ -210,7 +208,6 @@ class TestDialog(QDialog):
         # emsg.showMessage('Message: ')
 
     def _add_nam_block(self, nam_block, col):
-
         # TODO: run initial check on all the data to see if correct type
 
         # Set constants
@@ -265,7 +262,6 @@ class TestDialog(QDialog):
 
         # Add namelist item within block
         for nam_item in nambk0:
-
             # Retrieve value of namelist variable
             nam_val0 = nambk0[nam_item]
 
@@ -330,7 +326,6 @@ class TestDialog(QDialog):
                 tree.setIndexWidget(chiind2, q_btn)
 
     def handleItemChanged(self, col, item):
-
         # if col == "col0":
         #    col_alt = "col1"
         # else:
@@ -389,7 +384,6 @@ class TestDialog(QDialog):
             # TODO error check with pop up if the value isn't compatible with the key
 
     def handleExpanded(self, col, col_next, idx):
-
         item = self.tree[col].model().itemFromIndex(idx)
         text = item.text()
         for other in self.tree[col_next].model().findItems(text, Qt.MatchFixedString):
@@ -410,7 +404,6 @@ class TestDialog(QDialog):
         return self.data2
 
     def pass_block(self, ind, col, idx):
-
         if col == "col0":
             col_alt = "col1"
         else:
@@ -447,7 +440,6 @@ class TestDialog(QDialog):
         # code to update value in column two
 
     def pass_entry(self, col, nam_block, nam_item, idx):
-
         # buttonClicked = self.sender()
         # postitionOfWidget = buttonClicked.pos()
         # print(postitionOfWidget)
@@ -506,7 +498,6 @@ class TestDialog(QDialog):
         self.color_update(col, nam_block, nam_item)
 
     def color_update(self, col, nam_block, nam_item):
-
         color_chng = QColor(0, 0, 0)
         color_chn1 = QColor(176, 176, 176)
 
@@ -570,7 +561,6 @@ class TestDialog(QDialog):
             .model()
             .findItems(nam_item, Qt.MatchFixedString | Qt.MatchRecursive)
         ):
-
             newI = self.tree[col].model().indexFromItem(other)
             print("We're in Row")
             print(newI.row())
@@ -600,7 +590,6 @@ class TestDialog(QDialog):
         in1 = self.tree[col_alt].model().indexFromItem(pi1[0])
 
         if self.data[col][nam_block] != self.data[col_alt][nam_block]:
-
             self.tree[col].model().setData(in0, color_diff, Qt.ForegroundRole)
             self.tree[col_alt].model().setData(in1, color_diff, Qt.ForegroundRole)
         else:
@@ -664,7 +653,6 @@ class TestDialog(QDialog):
             # print 'the output file is set to : ' + self.filename
 
     def dir_scan(self, bld_dir, ftype):
-
         pattern = re.compile("NAMELIST")
         nl = {}
 
@@ -713,7 +701,6 @@ class TestDialog(QDialog):
         return nl
 
     def namelist_scan(self, namelist_in, nl_dict):
-
         nam_name = None
         nam_item = None
 
@@ -743,7 +730,6 @@ class TestDialog(QDialog):
     #   def namelist_write(self, namelist_out):
 
     def item_type(self, i):
-
         item_switcher = {"ln": bool, "nn": int, "rn": float, "cn": str, "sn": str}
 
         return item_switcher.get(i, self.emsg.showMessage("Message:"))
